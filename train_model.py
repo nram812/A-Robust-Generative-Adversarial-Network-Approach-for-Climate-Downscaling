@@ -26,6 +26,11 @@ with open(config_file, 'r') as f:
     config = json.load(f)
 
 
+if 'itensity' in config_file:
+    itensity_weight = 1
+else:
+    itensity_weight =0
+
 input_shape = config["input_shape"]  # the input shape of the reanalyses
 output_shape = config["output_shape"]
 # modified the output channels, filters, and output shape
@@ -106,8 +111,8 @@ with strategy.scope():
                                     orog=tf.convert_to_tensor(orog.values, 'float32'),
                                     vegt=tf.convert_to_tensor(vegt.values, 'float32'),
                                     he=tf.convert_to_tensor(he.values, 'float32'), gp_weight=config["gp_weight"],
-                                    unet = unet_model
-                                    )
+                                    unet = unet_model,
+                                    train_unet=True, intensity_weight = itensity_weight)
 
     # Compile the WGAN model.
     wgan.compile(d_optimizer=discriminator_optimizer,

@@ -31,7 +31,7 @@ nvidia-smi
 # Pacific Domain
 cd /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/
 
-/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/unet_pretraining_nobn.py $1
+/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/train_unet.py $1
 
 
 
