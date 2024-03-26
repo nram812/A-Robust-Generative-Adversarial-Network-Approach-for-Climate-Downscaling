@@ -115,11 +115,11 @@ for file in "$directory"/*.json; do
         # echo "File content: $content"
     fi
 done
-
+```
 ### Run_Config_Experiments.sl
 To modify the slurm file see below the configuration
 
-
+```bash
 #!/bin/bash -l
 #SBATCH --job-name=GPU_job
 #SBATCH --partition=hgx
@@ -144,7 +144,7 @@ cd /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/
 # select your python interpreter and run the code
 # please note that $1 allows us to pass a configuration file (.json) into the script.
 /nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/unet_pretraining_nobn.py $1
-
+```
 ### Train_unet.py
 Before the GAN is trained a U-NET regression model is trained for a certain number of epochs (240). This same U-Net is then used
 for all experiemnts.
