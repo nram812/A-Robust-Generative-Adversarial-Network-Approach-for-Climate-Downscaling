@@ -21,15 +21,10 @@ from tensorflow.keras import layers
 import pandas as pd
 
 config_file = sys.argv[-1] # configuratoin file for training algorithm
-
+pretrained_unet = False # set this as true if you want to use the same U-Net or a specific unet everytime. 
 with open(config_file, 'r') as f:
     config = json.load(f)
 
-
-if 'itensity' in config_file:
-    itensity_weight = 1
-else:
-    itensity_weight =0
 
 input_shape = config["input_shape"]  # the input shape of the reanalyses
 output_shape = config["output_shape"]
@@ -39,16 +34,17 @@ kernel_size = config["kernel_size"]
 n_channels = config["n_input_channels"]
 n_output_channels = config["n_output_channels"]
 BATCH_SIZE = config["batch_size"]
-
+unet_pretrained_path = config['unet_pretrained_path']
 
 # creating a path to store the model outputs
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
     os.makedirs(f'{config["output_folder"]}/{config["model_name"]}')
 # custom modules
-sys.path.append(config["src_path"])
+sys.path.append(os.getcwd())
 from src.layers import *
 from src.models import *
 from src.gan import *
+from src.process_input_training_data import *
 
 
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
@@ -64,9 +60,16 @@ with strategy.scope():
     generator = res_linear_activation(input_shape, output_shape, n_filters,
                                                       kernel_size, n_channels, n_output_channels,
                                                       resize=True)
-    unet_model = unet_linear(input_shape, output_shape, n_filters,
-                                                      kernel_size, n_channels, n_output_channels,
-                                                      resize=True)
+    if pretrained_unet:
+        # use an existing unet model
+        unet_model = tf.keras.models.load_model(unet_training_path,
+                                                custom_objects={"BicubicUpSampling2D":BicubicUpSampling2D},
+                                                compile =False)
+    else:
+        # train the model from scratch
+        unet_model = unet_linear(input_shape, output_shape, n_filters,
+                                                          kernel_size, n_channels, n_output_channels,
+                                                          resize=True)
     noise_dim = [tuple(generator.inputs[i].shape[1:]) for i in range(len(generator.inputs) - 1)]
     d_model = get_discriminator_model(tuple(output_shape) + (n_output_channels,),
                                       tuple(input_shape) + (n_channels,))
@@ -112,7 +115,8 @@ with strategy.scope():
                                     vegt=tf.convert_to_tensor(vegt.values, 'float32'),
                                     he=tf.convert_to_tensor(he.values, 'float32'), gp_weight=config["gp_weight"],
                                     unet = unet_model,
-                                    train_unet=True, intensity_weight = itensity_weight)
+                                    train_unet=True,
+                                    intensity_weight = config["itensity_weight"])
 
     # Compile the WGAN model.
     wgan.compile(d_optimizer=discriminator_optimizer,

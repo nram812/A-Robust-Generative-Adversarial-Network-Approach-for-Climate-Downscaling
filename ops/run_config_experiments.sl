@@ -22,16 +22,10 @@ nvidia-smi
 # set the experiment name that we are implementing
 
 
-# Training the Mosdel in the Perfect Framework
-#/nesi/project/niwa00004/rampaln/bin/python #/nesi/project/niwa00018/ML_downscaling_CCAM/Training_CNN/ops/training_GAN/train_gan.py
+# change to your working directory
+cd "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling"
 
-# Imperfect Framework
-#/nesi/project/niwa00004/rampaln/bin/python #/nesi/project/niwa00018/ML_downscaling_CCAM/Training_CNN/ops/training_GAN/train_gan_imperfect_framework_#updated_fine_tuning.py
-
-# Pacific Domain
-cd /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/
-
-/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/unet_pretraining_nobn.py $1
+/nesi/project/niwa00004/rampaln/bin/python ops/train_model.py $1
 
 
 

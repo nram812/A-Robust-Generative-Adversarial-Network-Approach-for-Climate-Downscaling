@@ -7,6 +7,9 @@ from dask.diagnostics import ProgressBar
 from tensorflow.keras.callbacks import Callback
 import numpy as np
 import pandas as pd
+import sys
+import os
+sys.path.append(os.getcwd())
 from src.layers import res_block_initial, res_block, \
     BicubicUpSampling2D,upsample, conv_block, encoder, decoder_noise
 

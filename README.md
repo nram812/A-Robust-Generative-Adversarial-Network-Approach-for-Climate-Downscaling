@@ -5,8 +5,9 @@ This repository contains the code and data (link to Zenodo) for "A Robust Genera
 
 ## Add some information about the Zenodo outputs
 
+## Re-write about how to get rid of data from Zenodo
 
-
+## Code assumes that your are working in the current working directory
 ## Setting Up A Python Environment
 These experiments have been performed on an Nvidia A100 GPU, and thus the code has been developed in a
 slurm (job scheduling) and unix enivironment.

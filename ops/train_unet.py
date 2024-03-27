@@ -40,10 +40,11 @@ BATCH_SIZE = config["batch_size"]
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
     os.makedirs(f'{config["output_folder"]}/{config["model_name"]}')
 # custom modules
-sys.path.append(config["src_path"])
+sys.path.append(os.getcwd())
 from src.layers import *
 from src.models import *
 from src.gan import *
+from src.process_input_training_data import *
 
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
 

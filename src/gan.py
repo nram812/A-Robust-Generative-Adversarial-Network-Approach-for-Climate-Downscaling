@@ -8,25 +8,50 @@ from tensorflow.keras.callbacks import Callback
 import tensorflow.keras.backend as K
 import numpy as np
 import pandas as pd
-batch_size = 32
-rx3day_file = None
-IMG_SHAPE = (172, 179,1)
+
+
+class GeneratorCheckpoint(Callback):
+    def __init__(self, generator, filepath, period):
+        super().__init__()
+        self.generator = generator
+        self.filepath = filepath
+        self.period = period
+
+    def on_epoch_end(self, epoch, logs=None):
+        if (epoch + 1) % self.period == 0:
+            self.generator.save(f"{self.filepath}_epoch_{epoch + 1}.h5")
+
+
+class DiscriminatorCheckpoint(Callback):
+    def __init__(self, discriminator, filepath, period):
+        super().__init__()
+        self.discriminator = discriminator
+        self.filepath = filepath
+        self.period = period
+
+    def on_epoch_end(self, epoch, logs=None):
+        if (epoch + 1) % self.period == 0:
+            self.discriminator.save(f"{self.filepath}_epoch_{epoch + 1}.h5")
+
+
+def discriminator_loss(real_img, fake_img):
+    real_loss = tf.reduce_mean(real_img)
+    fake_loss = tf.reduce_mean(fake_img)
+    return fake_loss - real_loss
+
+
+def generator_loss(fake_img):
+    return -tf.reduce_mean(fake_img)
 
 
 class WGAN_Cascaded_Residual_IP(keras.Model):
     """
-    adapted from https://arxiv.org/pdf/2207.01561.pdf
-    https://arxiv.org/pdf/1903.05628.pdf
-
-    Also from https://arxiv.org/pdf/1903.05628.pdf
-
-    It is also likely that our GAN suffers from MODE collapse and has an inability to generate diversity
-
-    Added static vegetation inputs as a predictor
+    A residual GAN to downscale precipitatoin, this GAN incorparates an Intensity Constraint
     """
 
     def __init__(self, discriminator, generator, latent_dim,
-                 discriminator_extra_steps=3, gp_weight=10.0, ad_loss_factor=1e-3, latent_loss=5e-2, orog=None, he=None,
+                 discriminator_extra_steps=3, gp_weight=10.0, ad_loss_factor=1e-3,
+                 latent_loss=5e-2, orog=None, he=None,
                  vegt=None, unet=None, train_unet=True, intensity_weight = 1):
         super(WGAN_Cascaded_Residual_IP, self).__init__()
 
@@ -44,7 +69,8 @@ class WGAN_Cascaded_Residual_IP(keras.Model):
         self.train_unet = train_unet
         self.intensity_weight = intensity_weight
 
-    def compile(self, d_optimizer, g_optimizer, d_loss_fn, g_loss_fn, u_loss_fn, u_optimizer):
+    def compile(self, d_optimizer, g_optimizer, d_loss_fn,
+                g_loss_fn, u_loss_fn, u_optimizer):
         super(WGAN_Cascaded_Residual_IP, self).compile()
         self.d_optimizer = d_optimizer
         self.g_optimizer = g_optimizer

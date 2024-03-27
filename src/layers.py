@@ -8,9 +8,7 @@ from dask.diagnostics import ProgressBar
 from tensorflow.keras.callbacks import Callback
 import numpy as np
 import pandas as pd
-batch_size = 32
 
-IMG_SHAPE = (172, 179,1)
 
 
 def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
