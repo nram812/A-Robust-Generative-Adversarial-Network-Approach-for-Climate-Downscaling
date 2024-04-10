@@ -1,18 +1,24 @@
 # A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling
 This repository contains the code and data (link to Zenodo) for "A Robust Generative Adversarial Network Approach for Climate Downscaling"
 
+This repository is under active development, the evaluation scripts are currently being developed and will be uploaded as soon as available. 
+
 ## Understanding the Repository:
 
-## Add some information about the Zenodo outputs
+The data used to train the GAN is publically available on Zenodo, this also includes the ground truth evaluation data. 
 
-## Re-write about how to get rid of data from Zenodo
-
-## Code assumes that your are working in the current working directory
 ## Setting Up A Python Environment
 These experiments have been performed on an Nvidia A100 GPU, and thus the code has been developed in a
 slurm (job scheduling) and unix enivironment.
 
 These experiments can be run without slurm, but will require special configurations.
+
+To create the python environment for training this algorithm use the following commands:
+
+```bash
+conda env create -f environment.yaml
+conda activate gan_env
+```
 
 
 ## Experiment Set Up
