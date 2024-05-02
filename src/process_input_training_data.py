@@ -21,7 +21,7 @@ def prepare_training_data(config, X, y, means, stds):
     stacked_X = xr.concat([X_norm[varname] for varname in list_of_vars], dim="channel")
     # stack features
     stacked_X['channel'] = (('channel'), list_of_vars)
-    stacked_X = stacked_X.transpose("time", "lat", "lon", "channel")
+
     times = stacked_X.time.to_index().intersection(y.time.to_index())
     # this part should be fine
     stacked_X = stacked_X.sel(time=times)
@@ -52,7 +52,8 @@ def preprocess_input_data(config):
     X = xr.open_dataset(config["train_x"])  # .sel(time = slice("2016", None))
     X['time'] = pd.to_datetime(X.time.dt.strftime("%Y-%m-%d"))
 
-    y = xr.open_dataset(config["train_y"], chunks={"time": 5000})  # .sel(time = slice("2016", None))
+    y = xr.open_dataset(config["train_y"], chunks={"time": 5000})
+    y['time'] = pd.to_datetime(y.time.dt.strftime("%Y-%m-%d"))# .sel(time = slice("2016", None))
     try:
         y = y.drop("lat_bnds")
         y = y.drop("lon_bnds")
@@ -60,8 +61,6 @@ def preprocess_input_data(config):
     except:
         pass
 
-    with ProgressBar():
-        y = y.load().transpose("time", "lat", "lon")
     # preare the training data
     stacked_X, y = prepare_training_data(config, X, y, means, stds)
 

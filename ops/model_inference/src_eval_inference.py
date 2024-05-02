@@ -52,7 +52,7 @@ def load_data_historical(model, output_config_name):
 
     # Load and process CCAM outputs
     # y_ssp370 = xr.open_dataset(f'{ccam_output_path}{model}_ssp370_precip.nc')
-    y_historical = xr.open_dataset(f'{output_config_name["ground_truth"]}{model}_historical_precip.nc')
+    y_historical = xr.open_dataset(f'{output_config_name["ground_truth"]}/{model}_historical_precip.nc')
     y_historical['time'] = pd.to_datetime(y_historical.time.dt.strftime("%Y-%m-%d"))
     return df, y_historical
 

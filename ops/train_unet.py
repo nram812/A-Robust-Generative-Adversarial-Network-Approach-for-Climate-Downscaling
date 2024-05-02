@@ -47,7 +47,10 @@ from src.gan import *
 from src.process_input_training_data import *
 
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
-
+with ProgressBar():
+    y = y.load().transpose("time", "lat", "lon")
+    stacked_X = stacked_X.transpose("time", "lat", "lon", "channel")
+    stacked_X = stacked_X.load()
 strategy = MirroredStrategy()
 
 # Your model creation and training code goes here
