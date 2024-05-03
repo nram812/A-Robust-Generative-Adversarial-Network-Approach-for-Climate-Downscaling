@@ -1,0 +1,87 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: Cannot load module "NIWA" because these
+module(s) are loaded:
+   NeSI
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NIWA             /opt/nesi/modulefiles/NIWA.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Thu May  2 22:55:19 2024       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA A100-SXM...  On   | 00000000:85:00.0 Off |                    0 |
+| N/A   26C    P0    59W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+2024-05-02 22:55:21.369450: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+<xarray.DataArray 'orog' ()>
+array(1733.36035156) <xarray.DataArray 'he' ()>
+array(1157.46264648) <xarray.DataArray 'vegt' ()>
+array(17.00000763)
+[                                        ] | 0% Completed |  0.0s[                                        ] | 0% Completed |  0.1s[                                        ] | 0% Completed |  0.2s[                                        ] | 0% Completed |  0.3s[                                        ] | 0% Completed |  0.4s[                                        ] | 0% Completed |  0.5s[                                        ] | 0% Completed |  0.6s[                                        ] | 0% Completed |  0.7s[                                        ] | 0% Completed |  0.8s[                                        ] | 0% Completed |  0.9s[                                        ] | 0% Completed |  1.0s[                                        ] | 0% Completed |  1.1s[                                        ] | 1% Completed |  1.2s[                                        ] | 1% Completed |  1.3s[                                        ] | 1% Completed |  1.4s[                                        ] | 1% Completed |  1.5s[                                        ] | 1% Completed |  1.6s[                                        ] | 1% Completed |  1.7s[#                                       ] | 2% Completed |  1.8s[#                                       ] | 2% Completed |  1.9s[#                                       ] | 2% Completed |  2.0s[##                                      ] | 5% Completed |  2.1s[##                                      ] | 5% Completed |  2.2s[##                                      ] | 5% Completed |  2.3s[##                                      ] | 6% Completed |  2.4s[###                                     ] | 7% Completed |  2.5s[####                                    ] | 10% Completed |  2.6s[####                                    ] | 11% Completed |  2.7s[####                                    ] | 11% Completed |  2.8s[#####                                   ] | 14% Completed |  2.9s[#####                                   ] | 14% Completed |  3.0s[######                                  ] | 15% Completed |  3.1s[######                                  ] | 15% Completed |  3.2s[######                                  ] | 15% Completed |  3.3s[######                                  ] | 16% Completed |  3.7s[######                                  ] | 16% Completed |  3.8s[######                                  ] | 16% Completed |  3.9s[#######                                 ] | 18% Completed |  4.0s[#######                                 ] | 18% Completed |  4.1s[#######                                 ] | 18% Completed |  4.2s[#######                                 ] | 19% Completed |  4.3s[#######                                 ] | 19% Completed |  4.4s[########                                ] | 20% Completed |  4.5s[#########                               ] | 23% Completed |  4.6s[##########                              ] | 25% Completed |  4.7s[##########                              ] | 27% Completed |  4.8s[###########                             ] | 28% Completed |  4.9s[###########                             ] | 28% Completed |  5.0s[###########                             ] | 28% Completed |  5.1s[###########                             ] | 28% Completed |  5.2s[###########                             ] | 28% Completed |  5.3s[###########                             ] | 28% Completed |  5.4s[###########                             ] | 28% Completed |  5.5s[###########                             ] | 28% Completed |  5.6s[###########                             ] | 28% Completed |  5.7s[###########                             ] | 28% Completed |  5.8s[###########                             ] | 28% Completed |  5.9s[###########                             ] | 28% Completed |  6.0s[###########                             ] | 28% Completed |  6.1s[###########                             ] | 28% Completed |  6.2s[###########                             ] | 29% Completed |  6.3s[###########                             ] | 29% Completed |  6.4s[############                            ] | 31% Completed |  6.5s[############                            ] | 31% Completed |  6.6s[############                            ] | 32% Completed |  6.7s[#############                           ] | 33% Completed |  6.8s[#############                           ] | 33% Completed |  6.9s[#############                           ] | 33% Completed |  7.0s[##############                          ] | 35% Completed |  7.1s[##############                          ] | 36% Completed |  7.2s[##############                          ] | 36% Completed |  7.3s[###############                         ] | 38% Completed |  7.4s[################                        ] | 41% Completed |  7.5s[################                        ] | 41% Completed |  7.6s[#################                       ] | 42% Completed |  7.7s[#################                       ] | 44% Completed |  7.8s[#################                       ] | 44% Completed |  7.9s[##################                      ] | 45% Completed |  8.0s[##################                      ] | 46% Completed |  8.1s[##################                      ] | 46% Completed |  8.2s[##################                      ] | 46% Completed |  8.3s[###################                     ] | 48% Completed |  8.4s[####################                    ] | 50% Completed |  8.5s[####################                    ] | 50% Completed |  8.6s[####################                    ] | 50% Completed |  8.7s[####################                    ] | 51% Completed |  8.8s[#####################                   ] | 53% Completed |  8.9s[######################                  ] | 55% Completed |  9.0s[######################                  ] | 55% Completed |  9.1s[######################                  ] | 57% Completed |  9.2s[#######################                 ] | 58% Completed |  9.3s[#######################                 ] | 59% Completed |  9.4s[#######################                 ] | 59% Completed |  9.5s[#######################                 ] | 59% Completed |  9.6s[#######################                 ] | 59% Completed |  9.7s[#######################                 ] | 59% Completed |  9.8s[#######################                 ] | 59% Completed |  9.9s[#######################                 ] | 59% Completed | 10.0s[########################                ] | 61% Completed | 10.1s[########################                ] | 62% Completed | 10.2s[########################                ] | 62% Completed | 10.3s[########################                ] | 62% Completed | 10.4s[########################                ] | 62% Completed | 10.5s[#########################               ] | 63% Completed | 10.6s[#########################               ] | 63% Completed | 10.7s[#########################               ] | 64% Completed | 10.8s[#########################               ] | 64% Completed | 10.9s[##########################              ] | 66% Completed | 11.0s[###########################             ] | 67% Completed | 11.1s[###########################             ] | 67% Completed | 11.2s[############################            ] | 70% Completed | 11.3s[############################            ] | 71% Completed | 11.4s[#############################           ] | 72% Completed | 11.5s[#############################           ] | 72% Completed | 11.6s[#############################           ] | 72% Completed | 11.7s[#############################           ] | 74% Completed | 11.8s[##############################          ] | 75% Completed | 11.9s[##############################          ] | 75% Completed | 12.0s[##############################          ] | 75% Completed | 12.1s[##############################          ] | 76% Completed | 12.2s[##############################          ] | 76% Completed | 12.3s[###############################         ] | 77% Completed | 12.4s[###############################         ] | 79% Completed | 12.5s[##################################      ] | 85% Completed | 12.6s[########################################] | 100% Completed | 13.1s
+Traceback (most recent call last):
+  File "ops/train_model_gust.py", line 50, in <module>
+    y = y.load().transpose("time", "lat", "lon")
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/dataset.py", line 4605, in transpose
+    _ = list(infix_dims(dims, self.dims, missing_dims))
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/utils.py", line 794, in infix_dims
+    raise ValueError(
+ValueError: ('time', 'lat', 'lon') must be a permuted list of Frozen({'time': 51100, 'bnds': 2, 'lon': 179, 'lat': 172}), unless `...` is included

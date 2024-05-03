@@ -1,0 +1,9 @@
+{"static_predictors": "./data/static_predictors/ERA5_eval_ccam_12km.198110_NZ_Invariant.nc",
+  "mean": "./data/normalization_coefs/mean_1974_2011.nc",
+  "std": "./data/normalization_coefs/mean_1974_2011.nc",
+  "ground_truth": "./data/test/ground_truth",
+  "eval_predictor_variables": "./data/test/predictor_variables",
+  "model_dir": "./models",
+  "output_dir": "./data/output",
+  "var_names": ["q_500", "q_850", "u_500", "u_850", "v_500", "v_850", "t_500", "t_850"]
+}

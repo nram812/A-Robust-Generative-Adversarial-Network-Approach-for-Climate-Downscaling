@@ -21,6 +21,11 @@ from src.process_input_training_data import *
 from tensorflow.keras import layers
 
 
+def create_output(X, y):
+    y = y.isel(time=0).drop("time")
+    y = y.expand_dims({"time": X.time.size})
+    y['time'] = (('time'), X.time.to_index())
+    return y
 # changed activation function to hyperbolic tangent
 
 def load_model_cascade(model_name, epoch, model_dir, load_unet=True):
@@ -154,7 +159,6 @@ def predict_parallel_resid(model, unet, inputs, output_shape, batch_size, orog_v
     with tqdm.tqdm(total=n_iterations, desc="Predicting", unit="batch") as pbar:
         for i in range(n_iterations):
             data_batch = inputs[i * batch_size: (i + 1) * batch_size]
-
             random_latent_vectors1 = tf.random.normal(shape=(1,) + tuple(model.inputs[0].shape[1:]))
             random_latent_vectors1 = tf.repeat(random_latent_vectors1, repeats=batch_size, axis=0)
             orog = expand_conditional_inputs(orog_vector, batch_size)

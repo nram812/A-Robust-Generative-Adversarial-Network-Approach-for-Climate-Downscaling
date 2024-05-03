@@ -1,15 +1,16 @@
 #!/bin/bash -l
 #SBATCH --job-name=GPU_job
-#SBATCH --partition=gpu
-#SBATCH --time=05:59:00
-#SBATCH --mem=169G
-#SBATCH --cpus-per-task=32
-#SBATCH --gpus-per-node=P100:1
-#SBATCH --account=niwa03712
+#SBATCH --partition=niwa_work
+#SBATCH --time=23:59:00
+#SBATCH --cluster=maui_ancil
+#SBATCH --mem=160G
+#SBATCH --gpus-per-node=A100:1
+#SBATCH --account=niwap03712
 #SBATCH --mail-user=neelesh.rampal@niwa.co.nz
 #SBATCH --mail-type=ALL
 #SBATCH --output log/%j-%x.out
 #SBATCH --error log/%j-%x.out
+
 
 
 module purge # optional

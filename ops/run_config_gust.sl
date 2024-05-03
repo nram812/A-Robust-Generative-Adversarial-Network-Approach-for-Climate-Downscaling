@@ -1,15 +1,16 @@
 #!/bin/bash -l
 #SBATCH --job-name=GPU_job
-#SBATCH --partition=hgx
-#SBATCH --time=48:59:00
-#SBATCH --mem=256G
-#SBATCH --cpus-per-task=32
+#SBATCH --partition=niwa_work
+#SBATCH --time=23:59:00
+#SBATCH --cluster=maui_ancil
+#SBATCH --mem=220G
 #SBATCH --gpus-per-node=A100:1
-#SBATCH --account=niwa03712
+#SBATCH --account=niwap03712
 #SBATCH --mail-user=neelesh.rampal@niwa.co.nz
 #SBATCH --mail-type=ALL
 #SBATCH --output log/%j-%x.out
 #SBATCH --error log/%j-%x.out
+
 
 module purge # optional
 module load NeSI
@@ -25,7 +26,7 @@ nvidia-smi
 # change to your working directory
 cd "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling"
 
-/nesi/project/niwa00004/rampaln/bin/python ops/train_model_gust.py $1
+/nesi/project/niwa00004/rampaln/bin/python ops/train_model_rain_future.py $1
 
 
 

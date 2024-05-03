@@ -5,7 +5,7 @@ import os
 from dask.diagnostics import ProgressBar
 
 
-def prepare_training_data(config, X, y, means, stds):
+def prepare_training_data(config, X, y, means, stds, match_index = True):
     """
     Normalizes the X training data, and stacks the features into a single dimension
     config: json file that contains a dictionary of the experimental files used in training
@@ -21,11 +21,14 @@ def prepare_training_data(config, X, y, means, stds):
     stacked_X = xr.concat([X_norm[varname] for varname in list_of_vars], dim="channel")
     # stack features
     stacked_X['channel'] = (('channel'), list_of_vars)
-
-    times = stacked_X.time.to_index().intersection(y.time.to_index())
-    # this part should be fine
-    stacked_X = stacked_X.sel(time=times)
-    y = y.sel(time=times)
+    if match_index:
+        times = stacked_X.time.to_index().intersection(y.time.to_index())
+        # this part should be fine
+        stacked_X = stacked_X.sel(time=times)
+        y = y.sel(time=times)
+    else:
+        y = y
+        stacked_X = stacked_X
     return stacked_X, y
 
 
@@ -44,7 +47,7 @@ def prepare_static_fields(config):
 
 
 # LOADING the mean values
-def preprocess_input_data(config):
+def preprocess_input_data(config, match_index = True):
     vegt, orog, he = prepare_static_fields(config)
     means = xr.open_dataset(config["mean"])
     stds = xr.open_dataset(config["std"])
@@ -62,6 +65,6 @@ def preprocess_input_data(config):
         pass
 
     # preare the training data
-    stacked_X, y = prepare_training_data(config, X, y, means, stds)
+    stacked_X, y = prepare_training_data(config, X, y, means, stds, match_index = match_index)
 
     return stacked_X, y, vegt, orog, he
