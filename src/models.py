@@ -20,6 +20,7 @@ def get_discriminator_model(high_resolution_fields_size,
                             low_resolution_dense_neurons =6,
                             high_resolution_feature_channels=(32, 64, 12)):
     """
+    Discriminator no longer uses the unet model to demonstrate realism
     **Purpose:**
       * To create a discriminator model that takes two streams of inputs, one from the low resolution predictor fields(X)
       and auxilary inputs (topography), it also takes in the high-resolution "regression prediction",
@@ -52,7 +53,7 @@ def get_discriminator_model(high_resolution_fields_size,
     img_input5 = layers.Input(shape=IMG_SHAPE)
     img_input6 = layers.Input(shape=IMG_SHAPE) # UNET regressoin predictor.
     # now we concatenate these input a single vector
-    img_inputs = tf.keras.layers.Concatenate(-1)([img_input3, img_input6])
+    img_inputs = tf.keras.layers.Concatenate(-1)([img_input3,img_input6])
 
     # Low resolution data stream
     x_init = conv_block(img_input2, low_resolution_feature_channels[0], kernel_size=(3, 3), strides=(2, 2), use_bn=use_bn, use_bias=use_bias,
@@ -140,12 +141,12 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
     img_inputs = tf.keras.layers.Concatenate(-1)([img_input3, img_input6])  # img_input4, img_input5
 
     # high-resolution information stream
-    x_init_ref_fields_high_res = conv_block(img_inputs, 1, kernel_size=(5, 5), strides=(1, 1), use_bn=bn, use_bias=True,
+    x_init_ref_fields_high_res = conv_block(img_inputs, 16, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
                                             use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
 
     # lowering the importance of topography
-    x_init_ref_fields = conv_block(x_init_ref_fields, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
+    x_init_ref_fields = conv_block(x_init_ref_fields, 32, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
                                    use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
     x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
@@ -161,11 +162,13 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
     x_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, x_output])
     decoder_output, noise_layers = decoder_noise(x_output, num_filters[:-1], 5)
     # resizing the decoder output
-    x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
-                                                         (decoder_output.shape[-3], decoder_output.shape[-2]),
-                                                         method=tf.image.ResizeMethod.BILINEAR)
-    decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_output])
-    decoder_output = res_block_initial(decoder_output, [32], 3, [1, 1], "output_conv", bn=bn)
+    # x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
+    #                                                      (decoder_output.shape[-3], decoder_output.shape[-2]),
+    #                                                      method=tf.image.ResizeMethod.BILINEAR)
+    #decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_output])
+
+    decoder_output = res_block_initial(decoder_output, [8], 3, [1, 1], "output_conv", bn=bn)
+    decoder_output = res_block_initial(decoder_output, [32], 3, [1, 1], "output_convbbb", bn=bn)
     # we are predicting log of precipitation
 
     # tf.keras.layers.Concatenate(-1)([alpha, beta, p_rainfall])
@@ -173,19 +176,19 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
                              method=tf.image.ResizeMethod.BILINEAR)
     output = tf.keras.layers.Concatenate(-1)([output, img_inputs])
 
-    output = tf.keras.layers.Conv2D(32,
-                                    5,
+    output = tf.keras.layers.Conv2D(64,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
     output = tf.keras.layers.Conv2D(16,
-                                    5,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
 
     output = tf.keras.layers.Conv2D(num_classes,
-                                    5,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layer2', activation=tf.keras.layers.LeakyReLU(0.2))(output)
@@ -231,13 +234,13 @@ def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channel
     # input vectors
     img_inputs = img_input3  # tf.keras.layers.Concatenate(-1)([img_input3])#, img_input4, img_input5])
 
-    x_init_ref_fields_high_res = conv_block(img_inputs, 1, kernel_size=(5, 5), strides=(1, 1), use_bn=True,
+    x_init_ref_fields_high_res = conv_block(img_inputs, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True,
                                             use_bias=True,
                                             use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
 
     # lowering the importance of topography
-    x_init_ref_fields = conv_block(x_init_ref_fields, 1, kernel_size=(5, 5), strides=(1, 1), use_bn=True, use_bias=True,
+    x_init_ref_fields = conv_block(x_init_ref_fields, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True, use_bias=True,
                                    use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
     x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
@@ -248,10 +251,10 @@ def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channel
     noise = layers.Input(shape=(x.shape[1], x.shape[2], x.shape[3]))
     concat_noise = x  # + noise#tf.keras.layers.Concatenate(-1)([x, noise]) # this appears to be more stable
     # add some noise within the GAN framework
-    x_output = res_block_initial(concat_noise, [num_filters[-1]], 5, [1, 1], "input_layer")
+    x_output = res_block_initial(concat_noise, [num_filters[-1]], 3, [1, 1], "input_layer")
     # add the reference static fields as an input
     x_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, x_output])
-    decoder_output, noise_layers = decoder_noise(x_output, num_filters[:-1], 5)
+    decoder_output, noise_layers = decoder_noise(x_output, num_filters[:-1], 3)
     # resizing the decoder output
     x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
                                                          (decoder_output.shape[-3], decoder_output.shape[-2]),
@@ -265,18 +268,18 @@ def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channel
                              method=tf.image.ResizeMethod.BILINEAR)
     output = tf.keras.layers.Concatenate(-1)([output, img_inputs])
     output = tf.keras.layers.Conv2D(32,
-                                    5,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
     output = tf.keras.layers.Conv2D(16,
-                                    5,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
 
     output = tf.keras.layers.Conv2D(num_classes,
-                                    5,
+                                    3,
                                     strides=1,
                                     padding='same',
                                     name='custom_precip_layer2', activation=tf.keras.layers.LeakyReLU(0.2))(output)

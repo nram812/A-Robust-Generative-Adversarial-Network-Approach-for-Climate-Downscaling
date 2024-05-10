@@ -55,7 +55,7 @@ def preprocess_input_data(config, match_index = True):
     X = xr.open_dataset(config["train_x"])  # .sel(time = slice("2016", None))
     X['time'] = pd.to_datetime(X.time.dt.strftime("%Y-%m-%d"))
 
-    y = xr.open_dataset(config["train_y"], chunks={"time": 5000})
+    y = xr.open_dataset(config["train_y"])#, chunks={"time": 5000})
     y['time'] = pd.to_datetime(y.time.dt.strftime("%Y-%m-%d"))# .sel(time = slice("2016", None))
     try:
         y = y.drop("lat_bnds")

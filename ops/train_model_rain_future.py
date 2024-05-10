@@ -19,6 +19,7 @@ from tensorflow.distribute import MirroredStrategy
 from tensorflow.keras import layers
 
 config_file = sys.argv[-1]  # configuratoin file for training algorithm
+tmp_dir = sys.argv[-2]
 pretrained_unet = False  # set this as true if you want to use the same U-Net or a specific unet everytime.
 with open(config_file, 'r') as f:
     config = json.load(f)
@@ -40,12 +41,15 @@ if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
 sys.path.append(os.getcwd())
 from src.layers import *
 from src.models import *
-from src.gan import *
+from src.gan_multi_gcm import *
 from src.process_input_training_data import *
-
+config["train_x"] = f"{tmp_dir}/{config['train_x'].split('/')[-1]}"
+config["train_y"] = f"{tmp_dir}/{config['train_y'].split('/')[-1]}"
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
-stacked_X = stacked_X.sel(GCM ='ACCESS-CM2')
-y = y.sel(GCM ='ACCESS-CM2')
+stacked_X = stacked_X.sel(GCM =config["train_gcm"])
+y = y.sel(GCM =config["train_gcm"])
+
+
 with ProgressBar():
     y = y.load()
     stacked_X = stacked_X.transpose("time", "lat", "lon", "channel")
@@ -60,26 +64,15 @@ with strategy.scope():
                                       kernel_size, n_channels, n_output_channels,
                                       resize=True)
 
-    if pretrained_unet:
-        # use an existing unet model
-        unet_model = tf.keras.models.load_model(unet_pretrained_path,
-                                                custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D},
-                                                compile=False)
-    else:
-        # train the model from scratch
-        unet_model = unet_linear(input_shape, output_shape, n_filters,
+
+    unet_model = unet_linear(input_shape, output_shape, n_filters,
                                  kernel_size, n_channels, n_output_channels,
                                  resize=True)
-    unet = tf.keras.models.load_model(r'./models/Rain_Model_Mod_Intensity_Constraint/unet_final.h5',
-                                                custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D},
-                                                compile=False)
 
     noise_dim = [tuple(generator.inputs[i].shape[1:]) for i in range(len(generator.inputs) - 1)]
     d_model = get_discriminator_model(tuple(output_shape) + (n_output_channels,),
                                       tuple(input_shape) + (n_channels,))
-    d_model = tf.keras.models.load_model(r'./models/Rain_Model_Mod_Intensity_Constraint/discriminator_epoch_50.h5',
-                                                custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D},
-                                                compile=False)
+
 
     generator_checkpoint = GeneratorCheckpoint(
         generator=generator,
@@ -144,7 +137,7 @@ with strategy.scope():
     with open(f'{config["output_folder"]}/{config["model_name"]}/config_info.json', 'w') as f:
         json.dump(config, f)
 
-    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=2, shuffle=True,
+    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=1, shuffle=True,
              callbacks=[generator_checkpoint, discriminator_checkpoint, unet_checkpoint])
 
 
