@@ -34,8 +34,8 @@ def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
                                 strides=strides[0],
                                 padding='same',
                                 name=name + '_1')(x)
-    if bn:
-        x1 = tf.keras.layers.BatchNormalization()(x1)
+    # if bn:
+    #     x1 = tf.keras.layers.BatchNormalization()(x1)
     x1 = tf.keras.layers.Activation('relu')(x1)
     x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
                                 kernel_size=kernel_size,
@@ -48,9 +48,9 @@ def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
                                strides=1,
                                padding='same',
                                name=name + '_shortcut')(x)
-    if bn:
-
-        x = tf.keras.layers.BatchNormalization()(x)
+    # if bn:
+    #
+    #     x = tf.keras.layers.BatchNormalization()(x)
 
     x1 = tf.keras.layers.Add()([x, x1])
 
@@ -73,8 +73,8 @@ def res_block(x, num_filters, kernel_size, strides, name, bn =True):
 
     if len(num_filters) == 1:
         num_filters = [num_filters[0], num_filters[0]]
-    if bn:
-        x1 = tf.keras.layers.BatchNormalization()(x)
+    # if bn:
+    #     x1 = tf.keras.layers.BatchNormalization()(x)
     else:
         x1 =x
     x1 = tf.keras.layers.Activation('relu')(x)
@@ -83,8 +83,8 @@ def res_block(x, num_filters, kernel_size, strides, name, bn =True):
                                 strides=strides[0],
                                 padding='same',
                                 name=name + '_1')(x1)
-    if bn:
-        x1 = tf.keras.layers.BatchNormalization()(x1)
+    # if bn:
+    #     x1 = tf.keras.layers.BatchNormalization()(x1)
     x1 = tf.keras.layers.Activation('relu')(x1)
     x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
                                 kernel_size=kernel_size,
@@ -98,8 +98,8 @@ def res_block(x, num_filters, kernel_size, strides, name, bn =True):
                                padding='same',
                                name=name + '_shortcut')(x)
     x1 = tf.keras.layers.Activation('relu')(x1)
-    if bn:
-        x = tf.keras.layers.BatchNormalization()(x)
+    # if bn:
+    #     x = tf.keras.layers.BatchNormalization()(x)
 
     x1 = tf.keras.layers.Add()([x, x1])
 
@@ -147,8 +147,8 @@ def conv_block(x, filters, activation, kernel_size=(7, 7), strides=(2, 2), paddi
     x = layers.Conv2D(filters, kernel_size, strides=strides,
                       padding=padding, use_bias=use_bias)(x)
 
-    if use_bn:
-        x = layers.BatchNormalization()(x)
+    # if use_bn:
+    #     x = layers.BatchNormalization()(x)
     x = activation(x)
 
     return x

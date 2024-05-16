@@ -22,6 +22,12 @@ from src.gan import *
 from ops.model_inference.src_eval_inference import *
 config_file = sys.argv[-1]
 
+
+
+# y['tasmin'] = (y['tasmin'] - output_means['tasmin'])/output_stds['tasmin']
+# min_value = y.tasmin.min()
+# y['tasmin'] = y['tasmin'] - min_value
+
 os.chdir(r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling')
 
 with open(config_file) as f:
@@ -31,7 +37,10 @@ quantiles = [ 0.5 , 0.7, 0.9, 0.925,
              0.995, 0.998, 0.999]
 historical_period = slice("1985","2014")
 future_period = slice("2070","2099")
-
+config["means_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/target_spatial_norm_all_gcm_mean.nc"
+config["stds_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/target_spatial_norm_all_gcm_std.nc"
+output_means = xr.open_dataset(config["means_output"])
+output_stds = xr.open_dataset(config["stds_output"])
 
 def compute_quantiles(df,quantiles, period):
     df = df.sel(time = period)

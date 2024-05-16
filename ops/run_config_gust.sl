@@ -1,11 +1,11 @@
 #!/bin/bash -l
 #SBATCH --job-name=GPU_job
-#SBATCH --partition=niwa_work
+#SBATCH --partition=hgx
 #SBATCH --time=23:59:00
-#SBATCH --cluster=maui_ancil
 #SBATCH --mem=220G
-#SBATCH --gpus-per-node=A100:1
-#SBATCH --account=niwap03712
+#SBATCH --cpus-per-task=32
+#SBATCH --gpus-per-node=A100:2
+#SBATCH --account=niwa03712
 #SBATCH --mail-user=neelesh.rampal@niwa.co.nz
 #SBATCH --mail-type=ALL
 #SBATCH --output log/%j-%x.out

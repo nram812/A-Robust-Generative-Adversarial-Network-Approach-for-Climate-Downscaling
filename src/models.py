@@ -234,32 +234,35 @@ def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channel
     # input vectors
     img_inputs = img_input3  # tf.keras.layers.Concatenate(-1)([img_input3])#, img_input4, img_input5])
 
-    x_init_ref_fields_high_res = conv_block(img_inputs, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True,
-                                            use_bias=True,
-                                            use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
-    x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
-
-    # lowering the importance of topography
-    x_init_ref_fields = conv_block(x_init_ref_fields, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True, use_bias=True,
-                                   use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
-    x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
-    x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
-                                        method=tf.image.ResizeMethod.BILINEAR)
+    # x_init_ref_fields_high_res = conv_block(img_inputs, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True,
+    #                                         use_bias=True,
+    #                                         use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
+    #
+    # # lowering the importance of topography
+    # x_init_ref_fields = conv_block(x_init_ref_fields, 1, kernel_size=(3, 3), strides=(1, 1), use_bn=True, use_bias=True,
+    #                                use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
+    # x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
+    #                                     method=tf.image.ResizeMethod.BILINEAR)
     # this is now the same resolution as the input fields
 
     # concat noise with inputs in this layer
     noise = layers.Input(shape=(x.shape[1], x.shape[2], x.shape[3]))
     concat_noise = x  # + noise#tf.keras.layers.Concatenate(-1)([x, noise]) # this appears to be more stable
     # add some noise within the GAN framework
+
     x_output = res_block_initial(concat_noise, [num_filters[-1]], 3, [1, 1], "input_layer")
-    # add the reference static fields as an input
-    x_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, x_output])
     decoder_output, noise_layers = decoder_noise(x_output, num_filters[:-1], 3)
+    x_init_ref_fields = tf.image.resize(x_output, [decoder_output.shape[1], decoder_output.shape[2]],
+                          method=tf.image.ResizeMethod.BILINEAR)
+    # add the reference static fields as an input
+    decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, decoder_output])
     # resizing the decoder output
-    x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
-                                                         (decoder_output.shape[-3], decoder_output.shape[-2]),
-                                                         method=tf.image.ResizeMethod.BILINEAR)
-    decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_output])
+    # x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
+    #                                                      (decoder_output.shape[-3], decoder_output.shape[-2]),
+    #                                                      method=tf.image.ResizeMethod.BILINEAR)
+    # decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_output])
     decoder_output = res_block_initial(decoder_output, [32], 3, [1, 1], "output_conv")
     # we are predicting log of precipitation
 

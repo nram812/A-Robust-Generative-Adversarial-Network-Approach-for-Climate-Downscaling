@@ -87,7 +87,7 @@ fig.show()
 
 model ='cascaded_perfect_framework_extreme_intensity_constraint'
 #fig, ax = plt.subplots()
-signal_gan = xr.open_dataset(r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/outputs/cascaded_perfect_framework_extreme_intensity_constraint/CCAM_NIWA-REMS_ACCESS-CM2_hist_ssp370_pr_ens.nc')
+signal_gan = xr.open_dataset(r'//nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/outputs/lightweight_access-cm2_multiple_discriminator_v2/CCAM_NIWA-REMS_ACCESS-CM2_hist_ssp370_tasmin.nc')
 signal_gan = xr.open_dataset(f'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/outputs/{model}/CCAM_NIWA-REMS_ACCESS-CM2_hist_ssp370_pr.nc')
 signal_gt = xr.open_dataset(r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/outputs/Val_metrics/cc_signal/gt_ACCESS-CM2.nc')
 signal_unet = xr.open_dataset(r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/outputs/Val_metrics/cc_signal/baseline_ACCESS-CM2.nc')
@@ -100,7 +100,7 @@ ax.set_ylabel('NZ-averaged \n Climate Change Signal (%)', fontsize =12, weight =
 
 ax.grid('on')
 ax.axhline(0.0, ls ='--')
-ax.axhline(3.25 * 7, ls ='--', label = 'Clausius Clapeyron', color ='r')
+#ax.axhline(3.25 * 7, ls ='--', label = 'Clausius Clapeyron', color ='r')
 ax.legend()
 ax.set_xlim(0.5, 1.01)
 # signal_gan.seas_cc_signal.plot(col ="season", col_wrap =2, cmap ='BrBG', vmax =50, vmin =-50)
@@ -137,9 +137,9 @@ fig.show()
 
 
 fig, ax = plt.subplots(1,3, figsize = (18, 6))
-(signal_gan.cc_signal).sel(quantile =0.995).plot(ax = ax[1], cmap ='BrBG', vmin =-30, vmax =30)
-(signal_gt.pr).sel(quantile =0.995).plot(ax = ax[2], cmap ='BrBG', vmin =-30, vmax =30)
-(signal_unet.pr).sel(quantile =0.995).plot(ax = ax[0], cmap ='BrBG', vmin =-30, vmax =30)
+(signal_gan.cc_signal).sel(quantile =0.999).plot(ax = ax[1], cmap ='BrBG', vmin =-30, vmax =30)
+(signal_gt.pr).sel(quantile =0.999).plot(ax = ax[2], cmap ='BrBG', vmin =-30, vmax =30)
+(signal_unet.pr).sel(quantile =0.999).plot(ax = ax[0], cmap ='BrBG', vmin =-30, vmax =30)
 ax[0].set_title('UNet')
 ax[1].set_title('GAN')
 ax[2].set_title('CCAM')
@@ -147,8 +147,15 @@ ax[2].set_title('CCAM')
 
 fig.show()
 
-signal_gan.seas_cc_signal.plot(col ="season", cmap ='BrBG', vmax =50)
+signal_gan.seas_cc_signal.plot(col ="season", cmap ='BrBG', vmin =-50, vmax =50)
 plt.show()
+
+signal_gan. hist_clim_rainfall.plot(col ="season", cmap ='RdBu_r')
+plt.show()
+
+signal_gan. future_clim_rainfall.plot(col ="season", cmap ='RdBu_r')
+plt.show()
+
 
     rx1day = df.groupby('time.year').max()
 y_true['time'] =pd.to_datetime(y_true.time.dt.strftime("%Y-%m-%d"))

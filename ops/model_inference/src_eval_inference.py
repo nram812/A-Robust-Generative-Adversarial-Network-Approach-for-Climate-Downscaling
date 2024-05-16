@@ -187,6 +187,48 @@ def predict_parallel_resid(model, unet, inputs, output_shape, batch_size, orog_v
     return output_shape
 
 
+def predict_parallel_resid_t(model, unet, inputs, output_shape, batch_size, orog_vector, he_vector, vegt_vector,
+                           model_type='GAN', output_means = None, output_stds = None, config = None):
+    n_iterations = inputs.shape[0] // batch_size
+    remainder = inputs.shape[0] - n_iterations * batch_size
+
+    dset = []
+
+    with tqdm.tqdm(total=n_iterations, desc="Predicting", unit="batch") as pbar:
+        for i in range(n_iterations):
+            data_batch = inputs[i * batch_size: (i + 1) * batch_size]
+            random_latent_vectors1 = tf.random.normal(shape=(1,) + tuple(model.inputs[0].shape[1:]))
+            random_latent_vectors1 = tf.repeat(random_latent_vectors1, repeats=batch_size, axis=0)
+            orog = expand_conditional_inputs(orog_vector, batch_size)
+            he = expand_conditional_inputs(he_vector, batch_size)
+            vegt = expand_conditional_inputs(vegt_vector, batch_size)
+
+            output = predict_batch_residual(model, unet, [random_latent_vectors1], data_batch, orog, he, vegt,
+                                            model_type)
+
+            dset += ((output.numpy()[:, :, :, 0]+ config['tmin_min_value']) * (output_stds['tasmin'].values) + output_means[
+                'tasmin'].values).tolist()
+
+            pbar.update(1)  # Update the progress bar
+
+    if remainder != 0:
+        random_latent_vectors1 = tf.random.normal(shape=(1,) + tuple(model.inputs[0].shape[1:]))
+        random_latent_vectors1 = tf.repeat(random_latent_vectors1, repeats=batch_size, axis=0)
+        orog = expand_conditional_inputs(orog_vector, remainder)
+        he = expand_conditional_inputs(he_vector, remainder)
+        vegt = expand_conditional_inputs(vegt_vector, remainder)
+
+        output = predict_batch_residual(model, unet, [random_latent_vectors1[:remainder]],
+                                        inputs[inputs.shape[0] - remainder:], orog, he, vegt, model_type)
+
+        dset += ((output.numpy()[:, :, :, 0] + config['tmin_min_value']) * (output_stds['tasmin'].values) +
+                 output_means[
+                     'tasmin'].values).tolist()
+    output_shape['pr'].values = dset
+
+    return output_shape
+
+
 class ValidationMetric(object):
     """
     This is a class that computes a wide variety of different metrics for validating a series
