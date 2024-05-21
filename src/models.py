@@ -106,6 +106,98 @@ def get_discriminator_model(high_resolution_fields_size,
     return d_model
 
 
+def get_discriminator_model_v2(high_resolution_fields_size,
+                            low_resolution_fields_size, use_bn=False,
+                            use_dropout=False, use_bias=True, low_resolution_feature_channels=(32, 64, 128),
+                            low_resolution_dense_neurons =6,
+                            high_resolution_feature_channels=(32, 64, 12)):
+    """
+    Discriminator no longer uses the unet model to demonstrate realism
+    **Purpose:**
+      * To create a discriminator model that takes two streams of inputs, one from the low resolution predictor fields(X)
+      and auxilary inputs (topography), it also takes in the high-resolution "regression prediction",
+      which is used for residuals
+
+    **Parameters:**
+      * **high_resolution_fields_size (tuple):**  The size of the 2D high-resolution RCM fields, over the NZ region this (172, 179)
+      * **low_resolution_fields_size (tuple):**  The size of the 2D low-resolution predictor fields (23, 26) over the New Zealand domain
+      * **use_bn (bool, optional):** whether to use batchnormalization or not (default no bn)
+      * **use_dropout (bool, optional):** whether to use dropout or not(default no dropout)
+      * **use_bias (bool, optional):** whether to use bias or not (default bias =True)
+
+    **Returns:**
+        * a tf.keras.models.Model class
+
+    **Example Usage:**
+    ```python
+    discriminator_model = get_discriminator_model((172, 179), (23, 26))
+    ```
+    """
+    IMG_SHAPE = high_resolution_fields_size
+    IMG_SHAPE2 = low_resolution_fields_size
+
+    img_input = layers.Input(shape=IMG_SHAPE) # real or fake predictions
+    img_input2 = layers.Input(shape=IMG_SHAPE2) # boundary conditions or predictor fields
+
+    # these are static inputs to the model
+    img_input3 = layers.Input(shape=IMG_SHAPE) # Topography predictor variable
+    img_input4 = layers.Input(shape=IMG_SHAPE) # other CCAM auxilary variables if used
+    img_input5 = layers.Input(shape=IMG_SHAPE)
+    img_input6 = layers.Input(shape=IMG_SHAPE) # UNET regressoin predictor.
+    # now we concatenate these input a single vector
+    img_inputs = tf.keras.layers.Concatenate(-1)([img_input3,img_input6])
+
+    # Low resolution data stream
+    x_init = conv_block(img_input2, low_resolution_feature_channels[0], kernel_size=(3, 3), strides=(2, 2), use_bn=use_bn, use_bias=use_bias,
+                        use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    x_init = conv_block(x_init, low_resolution_feature_channels[0], kernel_size=(3, 3), strides=(2, 2), use_bn=use_bn, use_bias=use_bias,
+                        use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # coarsen the data slightly
+    x_init = conv_block(x_init, low_resolution_feature_channels[1], kernel_size=(3, 3), strides=(2, 2), use_bn=use_bn, use_bias=use_bias,
+                        use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+
+    x_init = conv_block(x_init, low_resolution_feature_channels[2], kernel_size=(3, 3), strides=(2, 2), use_bn=use_bn, use_bias=use_bias,
+                        use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+
+    flatten = tf.keras.layers.Flatten()(x_init)
+    flatten = tf.keras.layers.Dense(low_resolution_dense_neurons)(flatten)
+
+    # high-resolution data stream
+    # first we put "real or fake data" with 32 channels, to allow it to be more important
+    x = conv_block(img_input, high_resolution_feature_channels[0], kernel_size=(3, 3), strides=(2, 2),
+                   use_bn=use_bn, use_bias=use_bias,
+                   use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # topography and residuals only have one filter
+    x2 = conv_block(img_inputs, 1, kernel_size=(5, 5), strides=(2, 2),
+                    use_bn=use_bn, use_bias=use_bias,
+                    use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # have two separate streams of conditional inputs into the model
+    x = tf.keras.layers.Concatenate(-1)([x, x2])
+    x = conv_block(x, high_resolution_feature_channels[1], kernel_size=(3, 3), strides=(2, 2),
+                   use_bn=use_bn, use_bias=use_bias,
+                   use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # reducing the dimensionality to speed up the computational cost
+    # x = tf.keras.layers.AveragePooling2D((3,3))(x)
+
+    x_init_raw = conv_block(x, high_resolution_feature_channels[1], kernel_size=(3, 3), strides=(2, 2),
+                            use_bn=use_bn, use_bias=use_bias,
+                            use_dropout=use_dropout, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+    # x_init_raw = tf.keras.layers.AveragePooling2D((3,3))(x_init_raw)
+    x_init_raw = conv_block(x_init_raw, high_resolution_feature_channels[2], kernel_size=(3, 3), strides=(2, 2),
+                            use_bn=use_bn, use_bias=use_bias,
+                            use_dropout=use_dropout, drop_value=0.0,
+                            activation=tf.keras.layers.LeakyReLU())
+    flattened_output = layers.Flatten()(x_init_raw)
+    concat = tf.keras.layers.Concatenate(-1)([flatten, flattened_output])
+    dense2 = tf.keras.layers.Dense(64)(concat)
+
+    x = layers.Dense(1)(dense2)
+
+    d_model = keras.models.Model([img_input, img_input2, img_input3, img_input4, img_input5, img_input6], x,
+                                 name="discriminator")
+    return d_model
+
+
 def res_linear_activation(input_size, resize_output, num_filters, kernel_size, num_channels, num_classes, resize=True,
                           bn=True):
     """

@@ -35,7 +35,7 @@ def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
                                 name=name + '_1')(x)
 
     x1 = tf.keras.layers.BatchNormalization()(x1)
-    x1 = tf.keras.layers.LeakyReLU(0.1)(x1)#tf.keras.layers.Activation('relu')(x1)
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)#tf.keras.layers.Activation('relu')(x1)
     x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
                                 kernel_size=kernel_size,
                                 strides=strides[1],
@@ -52,7 +52,7 @@ def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
     #     x = tf.keras.layers.BatchNormalization()(x)
 
     x1 = tf.keras.layers.Add()([x, x1])
-    x1 = tf.keras.layers.LeakyReLU(0.1)(x1)
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)
     return x1
 
 
@@ -97,7 +97,7 @@ def conv_block(x, filters, activation, kernel_size=(7, 7), strides=(2, 2), paddi
     x = layers.Conv2D(filters, kernel_size, strides=strides,
                       padding=padding, use_bias=use_bias)(x)
     #x = layers.BatchNormalization()(x)
-    x = tf.keras.layers.LeakyReLU(0.1)(x)
+    x = tf.keras.layers.LeakyReLU(0.05)(x)
 
     return x
 

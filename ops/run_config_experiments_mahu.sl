@@ -27,7 +27,7 @@ cd "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-
 #cp "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/predictor_fields/predictor_fields_hist_ssp370_merged_updated.nc" $TMPDIR/predictor_fields_hist_ssp370_merged_updated.nc
 #cp "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/target_fields/target_fields_hist_ssp370_concat.nc" $TMPDIR/target_fields_hist_ssp370_concat.nc
 #echo "completed data transfoer to temp_dir"
-/nesi/project/niwa00004/rampaln/bin/python ops/train_model_rain_future.py $TMPDIR $1
+/nesi/project/niwa00004/rampaln/bin/python ops/train_model_temp.py $TMPDIR $1
 
 
 
