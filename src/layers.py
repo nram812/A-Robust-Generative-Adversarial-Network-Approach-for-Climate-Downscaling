@@ -10,8 +10,7 @@ import numpy as np
 import pandas as pd
 
 
-
-def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
+def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
     """Residual Unet block layer for first layer
     In the residual unet the first residual block does not contain an
     initial batch normalization and activation so we create this separate
@@ -34,9 +33,9 @@ def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
                                 strides=strides[0],
                                 padding='same',
                                 name=name + '_1')(x)
-    # if bn:
-    #     x1 = tf.keras.layers.BatchNormalization()(x1)
-    x1 = tf.keras.layers.Activation('relu')(x1)
+
+    x1 = tf.keras.layers.BatchNormalization()(x1)
+    x1 = tf.keras.layers.LeakyReLU(0.1)(x1)#tf.keras.layers.Activation('relu')(x1)
     x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
                                 kernel_size=kernel_size,
                                 strides=strides[1],
@@ -53,56 +52,7 @@ def res_block_initial(x, num_filters, kernel_size, strides, name, bn =True):
     #     x = tf.keras.layers.BatchNormalization()(x)
 
     x1 = tf.keras.layers.Add()([x, x1])
-
-    return x1
-
-
-def res_block(x, num_filters, kernel_size, strides, name, bn =True):
-    """Residual Unet block layer
-    Consists of batch norm and relu, folowed by conv, batch norm and relu and
-    final convolution. The input is then put through
-    Args:
-        x: tensor, image or image activation
-        num_filters: list, contains the number of filters for each subblock
-        kernel_size: int, size of the convolutional kernel
-        strides: list, contains the stride for each subblock convolution
-        name: name of the layer
-    Returns:
-        x1: tensor, output from residual connection of x and x1
-    """
-
-    if len(num_filters) == 1:
-        num_filters = [num_filters[0], num_filters[0]]
-    # if bn:
-    #     x1 = tf.keras.layers.BatchNormalization()(x)
-    else:
-        x1 =x
-    x1 = tf.keras.layers.Activation('relu')(x)
-    x1 = tf.keras.layers.Conv2D(filters=num_filters[0],
-                                kernel_size=kernel_size,
-                                strides=strides[0],
-                                padding='same',
-                                name=name + '_1')(x1)
-    # if bn:
-    #     x1 = tf.keras.layers.BatchNormalization()(x1)
-    x1 = tf.keras.layers.Activation('relu')(x1)
-    x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
-                                kernel_size=kernel_size,
-                                strides=strides[1],
-                                padding='same',
-                                name=name + '_2')(x1)
-
-    x = tf.keras.layers.Conv2D(filters=num_filters[-1],
-                               kernel_size=1,
-                               strides=strides[0],
-                               padding='same',
-                               name=name + '_shortcut')(x)
-    x1 = tf.keras.layers.Activation('relu')(x1)
-    # if bn:
-    #     x = tf.keras.layers.BatchNormalization()(x)
-
-    x1 = tf.keras.layers.Add()([x, x1])
-
+    x1 = tf.keras.layers.LeakyReLU(0.1)(x1)
     return x1
 
 
@@ -146,33 +96,10 @@ def conv_block(x, filters, activation, kernel_size=(7, 7), strides=(2, 2), paddi
                use_bias=True, use_bn=True, use_dropout=True, drop_value=0.5):
     x = layers.Conv2D(filters, kernel_size, strides=strides,
                       padding=padding, use_bias=use_bias)(x)
-
-    # if use_bn:
-    #     x = layers.BatchNormalization()(x)
-    x = activation(x)
+    #x = layers.BatchNormalization()(x)
+    x = tf.keras.layers.LeakyReLU(0.1)(x)
 
     return x
-
-
-def encoder(x, num_filters, kernel_size):
-    """Unet encoder
-    Args:
-        x: tensor, output from previous layer
-        num_filters: list, number of filters for each decoder layer
-        kernel_size: int, size of the convolutional kernel
-    Returns:
-        encoder_output: list, output from all encoder layers
-    """
-
-    x = res_block_initial(x, [num_filters[0]], kernel_size, strides=[1, 1], name='layer1')
-
-    encoder_output = [x]
-    for i in range(1, len(num_filters)):
-        layer = 'encoder_layer' + str(i)
-        x = res_block(x, [num_filters[i]], kernel_size, strides=[2, 1], name=layer)
-        encoder_output.append(x)
-
-    return encoder_output
 
 
 def decoder_noise(x, num_filters, kernel_size, noise = False,bn =True):
@@ -187,13 +114,8 @@ def decoder_noise(x, num_filters, kernel_size, noise = False,bn =True):
     """
     noise_inputs = []# at some intermediate layers
     for i in range(1, len(num_filters) + 1):
-        layer = 'decoder_layer' + str(i)
         layer2 = 'decoder_layer_v2' + str(i)
         x = upsample(x, 2)
-        # noise is only added to these intermediate layers
-        #x = tf.keras.layers.Concatenate(axis=-1)([x, encoder_output[-i]])
-        #x = res_block(x, [num_filters[-i]], kernel_size, strides=[1, 1], name=layer)
-        # making the residual blocks even deeper than before.
-        x = res_block(x, [num_filters[-i]], kernel_size, strides=[1, 1], name=layer2, bn = bn)
+        x = res_block_initial(x, [num_filters[-i]], kernel_size, strides=[1, 1], name='decoder_layer_v2' + str(i))
 
     return x, noise_inputs

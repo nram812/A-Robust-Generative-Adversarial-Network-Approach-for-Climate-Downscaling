@@ -19,7 +19,7 @@ from tensorflow.distribute import MirroredStrategy
 from tensorflow.keras import layers
 
 config_file = sys.argv[-1]  # configuratoin file for training algorithm
-tmp_dir = sys.argv[-2]
+#tmp_dir = sys.argv[-2]
 pretrained_unet = False  # set this as true if you want to use the same U-Net or a specific unet everytime.
 with open(config_file, 'r') as f:
     config = json.load(f)
@@ -31,8 +31,9 @@ n_filters = config["n_filters"]
 kernel_size = config["kernel_size"]
 n_channels = config["n_input_channels"]
 n_output_channels = config["n_output_channels"]
-BATCH_SIZE = config["batch_size"]
-config['itensity_weight'] = 0.25
+BATCH_SIZE = config["batch_size"]//2
+unet_pretrained_path = config['unet_pretrained_path']
+
 # creating a path to store the model outputs
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
     os.makedirs(f'{config["output_folder"]}/{config["model_name"]}')
@@ -45,9 +46,18 @@ from src.process_input_training_data import *
 # config["train_x"] = f"{tmp_dir}/{config['train_x'].split('/')[-1]}"
 # config["train_y"] = f"{tmp_dir}/{config['train_y'].split('/')[-1]}"
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
-stacked_X = stacked_X#.sel(GCM ='ACCESS-CM2')
-y = y#.sel(GCM ='ACCESS-CM2')
-
+stacked_X = stacked_X.sel(GCM =config["train_gcm"])
+y = y.sel(GCM =config["train_gcm"])
+y = y[['tasmin']]
+config["means_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/target_spatial_norm_all_gcm_mean.nc"
+config["stds_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/target_spatial_norm_all_gcm_std.nc"
+output_means = xr.open_dataset(config["means_output"])
+output_stds = xr.open_dataset(config["stds_output"])
+y['tasmin'] = (y['tasmin'] - output_means['tasmin'].mean())/output_stds['tasmin'].mean()
+#min_value = y.tasmin.min()
+#config['tmin_min_value'] = float(min_value.values)
+#y['tasmin'] = y['tasmin'] - min_value
+# to stop the issues of negative values
 
 with ProgressBar():
     y = y.load()
@@ -63,6 +73,7 @@ with strategy.scope():
                                       kernel_size, n_channels, n_output_channels,
                                       resize=True)
 
+
     unet_model = unet_linear(input_shape, output_shape, n_filters,
                                  kernel_size, n_channels, n_output_channels,
                                  resize=True)
@@ -75,19 +86,19 @@ with strategy.scope():
     generator_checkpoint = GeneratorCheckpoint(
         generator=generator,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/generator',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     discriminator_checkpoint = DiscriminatorCheckpoint(
         discriminator=d_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/discriminator',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     unet_checkpoint = DiscriminatorCheckpoint(
         discriminator=unet_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/unet',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -104,7 +115,7 @@ with strategy.scope():
     unet_optimizer = keras.optimizers.Adam(
         learning_rate=lr_schedule, beta_1=config["beta_1"], beta_2=config["beta_2"])
 
-    wgan = WGAN_Cascaded_Residual_IP(discriminator=d_model,
+    wgan = WGAN_Cascaded_Residual_IP_CC_pres(discriminator=d_model,
                                      generator=generator,
                                      latent_dim=noise_dim,
                                      discriminator_extra_steps=config["discrim_steps"],
@@ -127,15 +138,33 @@ with strategy.scope():
     # Start training the model.
     # we normalize by a fixed normalization value
     total_size = stacked_X.time.size
-    eval_times = BATCH_SIZE * (total_size // BATCH_SIZE)
+    eval_times = (BATCH_SIZE * ((total_size//2) // BATCH_SIZE))
 
-    data = tuple([tf.convert_to_tensor(np.log(y.pr[:eval_times].transpose("time", "lat", "lon").values*3600*24 + config["delta"]), 'float32'),
-                  tf.convert_to_tensor(stacked_X[:eval_times].values, 'float32')])
+
+    def create_dataset(y, X, eval_times):
+        output_vars = {
+            'tasmin': tf.convert_to_tensor(y.tasmin.values[:eval_times][::-1], dtype=tf.float32),
+
+            'tasmin_future': tf.convert_to_tensor(y.tasmin.values[eval_times:2 * eval_times], dtype=tf.float32)
+
+        }
+        X_tensor = {"X": tf.convert_to_tensor(X.values[:eval_times][::-1], dtype=tf.float32),
+                    "X_future": tf.convert_to_tensor(X.values[eval_times:2 * eval_times], dtype=tf.float32)}
+
+        return tf.data.Dataset.from_tensor_slices((output_vars, X_tensor))
+
+
+    data = create_dataset(y, stacked_X, eval_times)
+    options = tf.data.Options()
+    options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
+    data = data.with_options(options)
+    data = data.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    data = data.shuffle(16)
 
     with open(f'{config["output_folder"]}/{config["model_name"]}/config_info.json', 'w') as f:
         json.dump(config, f)
 
-    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=1, shuffle=True,
+    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=1,
              callbacks=[generator_checkpoint, discriminator_checkpoint, unet_checkpoint])
 
 

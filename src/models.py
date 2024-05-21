@@ -10,8 +10,8 @@ import pandas as pd
 import sys
 import os
 sys.path.append(os.getcwd())
-from src.layers import res_block_initial, res_block, \
-    BicubicUpSampling2D,upsample, conv_block, encoder, decoder_noise
+from src.layers import res_block_initial, \
+    BicubicUpSampling2D,upsample, conv_block,decoder_noise
 
 
 def get_discriminator_model(high_resolution_fields_size,
@@ -136,18 +136,18 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
     img_input3 = layers.Input(shape=[resize_output[0], resize_output[1], 1]) # topography (RCM resolution)
     img_input4 = layers.Input(shape=[resize_output[0], resize_output[1], 1]) # other auxiilary variables if needed
     img_input5 = layers.Input(shape=[resize_output[0], resize_output[1], 1])
-    img_input6 = layers.Input(shape=[resize_output[0], resize_output[1], 1]) # U-Net prediction (regression-baseline)
+    img_input6 = layers.Input(shape=[resize_output[0], resize_output[1], 1])# U-Net prediction (regression-baseline)
     # input vectors
     img_inputs = tf.keras.layers.Concatenate(-1)([img_input3, img_input6])  # img_input4, img_input5
 
     # high-resolution information stream
     x_init_ref_fields_high_res = conv_block(img_inputs, 16, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
-                                            use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+                                            use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU(0.2))
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
 
     # lowering the importance of topography
     x_init_ref_fields = conv_block(x_init_ref_fields, 32, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
-                                   use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU())
+                                   use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU(0.2))
     x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
     x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
                                         method=tf.image.ResizeMethod.BILINEAR)
@@ -161,37 +161,39 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
     # add the reference static fields as an input
     x_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, x_output])
     decoder_output, noise_layers = decoder_noise(x_output, num_filters[:-1], 5)
+    init_layer_fields = tf.image.resize(x_output, [decoder_output.shape[1], decoder_output.shape[2]],
+                          method=tf.image.ResizeMethod.BILINEAR)
+    # add the reference static fields as an input
+    decoder_output = tf.keras.layers.Concatenate(-1)([init_layer_fields, decoder_output])
     # resizing the decoder output
     # x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
     #                                                      (decoder_output.shape[-3], decoder_output.shape[-2]),
     #                                                      method=tf.image.ResizeMethod.BILINEAR)
-    #decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_output])
-
-    decoder_output = res_block_initial(decoder_output, [8], 3, [1, 1], "output_conv", bn=bn)
-    decoder_output = res_block_initial(decoder_output, [32], 3, [1, 1], "output_convbbb", bn=bn)
+    #decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_outpu
+    decoder_output = res_block_initial(decoder_output, [64], 3, [1, 1], "output_convbbb", bn=bn)
     # we are predicting log of precipitation
 
     # tf.keras.layers.Concatenate(-1)([alpha, beta, p_rainfall])
     output = tf.image.resize(decoder_output, (resize_output[0], resize_output[1]),
                              method=tf.image.ResizeMethod.BILINEAR)
     output = tf.keras.layers.Concatenate(-1)([output, img_inputs])
-
+    output = res_block_initial(output, [64], 3, [1, 1], "output_conv2341", bn=bn)
     output = tf.keras.layers.Conv2D(64,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
+                                    name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(0.4))(output)
     output = tf.keras.layers.Conv2D(16,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
+                                    name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(0.4))(output)
 
     output = tf.keras.layers.Conv2D(num_classes,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layer2', activation=tf.keras.layers.LeakyReLU(0.2))(output)
+                                    name='custom_precip_layer2', activation='linear')(output)
     input_layers = [noise] + [x, img_input3, img_input4, img_input5, img_input6]
     # added multiple inputs into the tensorflow
     # output = output + x_input
@@ -270,22 +272,26 @@ def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channel
     output = tf.image.resize(decoder_output, (resize_output[0], resize_output[1]),
                              method=tf.image.ResizeMethod.BILINEAR)
     output = tf.keras.layers.Concatenate(-1)([output, img_inputs])
+    output = res_block_initial(output, [32], 3, [1, 1], "output_convbas1")
+    # we are predicting log of precipitation
+
+    # tf.keras.layers.Concatenate(-1)([alpha, beta, p_rainfall])
     output = tf.keras.layers.Conv2D(32,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
+                                    name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(0.3))(output)
     output = tf.keras.layers.Conv2D(16,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(1e-4))(output)
+                                    name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(0.5))(output)
 
     output = tf.keras.layers.Conv2D(num_classes,
                                     3,
                                     strides=1,
                                     padding='same',
-                                    name='custom_precip_layer2', activation=tf.keras.layers.LeakyReLU(0.2))(output)
+                                    name='custom_precip_layer2', activation='linear')(output)
     input_layers = [noise] + [x, img_input3, img_input4, img_input5]
     # added multiple inputs into the tensorflow
     # output = output + x_input

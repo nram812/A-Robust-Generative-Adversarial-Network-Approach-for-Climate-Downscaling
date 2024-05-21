@@ -23,4 +23,16 @@ Tried a few new things
 2. I tried to change the weight of the intensity constraint - which I haven't fully investigated yet
 3. I tried to use a "fixed" pre-trained U-Net but that causes the model to even further overfit
 4. I am now trying to now reduce the weight of the intensity constraint, but I have now changed the model
-architecture to not have any concatenation of the unet at the last part (as I thought that was constraining the GAN too much). 
+architecture to not have any concatenation of the unet at the last part (as I thought that was constraining the GAN too much).
+
+I tried a signal preserving method during training, but it seems the biggest effect arises from the fact that I used batch normalization within
+the layers of the network, bu
+
+The GAN outputs for the extreme run are located on the paper/experiments folder.
+
+Batchnormalization appears to play a really big role in the quality of the outputs, trained without batchnormalization appears to have lots of artifacts in the quality of the outputs
+This is the case for both temperature and precipitatoin.
+
+on 21-05 I moved the batch noramlization layers from the conv layer
+
+I only just now aded a signal constraint

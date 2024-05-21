@@ -43,8 +43,8 @@ from src.layers import *
 from src.models import *
 from src.gan import *
 from src.process_input_training_data import *
-config["train_x"] = f"{tmp_dir}/{config['train_x'].split('/')[-1]}"
-config["train_y"] = f"{tmp_dir}/{config['train_y'].split('/')[-1]}"
+# config["train_x"] = f"{tmp_dir}/{config['train_x'].split('/')[-1]}"
+# config["train_y"] = f"{tmp_dir}/{config['train_y'].split('/')[-1]}"
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
 stacked_X = stacked_X.sel(GCM =config["train_gcm"])
 y = y.sel(GCM =config["train_gcm"])
@@ -53,10 +53,10 @@ config["means_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-vari
 config["stds_output"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/target_spatial_norm_all_gcm_std.nc"
 output_means = xr.open_dataset(config["means_output"])
 output_stds = xr.open_dataset(config["stds_output"])
-y['tasmin'] = (y['tasmin'] - output_means['tasmin'])/output_stds['tasmin']
-min_value = y.tasmin.min()
-config['tmin_min_value'] = float(min_value.values)
-y['tasmin'] = y['tasmin'] - min_value
+y['tasmin'] = (y['tasmin'] - output_means['tasmin'].mean())/output_stds['tasmin'].mean()
+#min_value = y.tasmin.min()
+#config['tmin_min_value'] = float(min_value.values)
+#y['tasmin'] = y['tasmin'] - min_value
 # to stop the issues of negative values
 
 with ProgressBar():
@@ -86,19 +86,19 @@ with strategy.scope():
     generator_checkpoint = GeneratorCheckpoint(
         generator=generator,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/generator',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     discriminator_checkpoint = DiscriminatorCheckpoint(
         discriminator=d_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/discriminator',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     unet_checkpoint = DiscriminatorCheckpoint(
         discriminator=unet_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/unet',
-        period=5  # Save every 5 epochs
+        period=3  # Save every 5 epochs
     )
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
