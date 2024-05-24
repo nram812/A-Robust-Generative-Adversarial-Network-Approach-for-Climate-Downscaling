@@ -69,10 +69,9 @@ strategy = MirroredStrategy()
 
 # Define the generator and discriminator within the strategy scope
 with strategy.scope():
-    generator = res_linear_activation(input_shape, output_shape, n_filters,
+    generator = res_linear_activation_bn(input_shape, output_shape, n_filters,
                                       kernel_size, n_channels, n_output_channels,
                                       resize=True)
-
 
     unet_model = unet_linear(input_shape, output_shape, n_filters,
                                  kernel_size, n_channels, n_output_channels,

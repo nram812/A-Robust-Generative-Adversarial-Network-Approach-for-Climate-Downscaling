@@ -33,7 +33,8 @@ n_channels = config["n_input_channels"]
 n_output_channels = config["n_output_channels"]
 BATCH_SIZE = config["batch_size"]//2
 unet_pretrained_path = config['unet_pretrained_path']
-
+config["signal_weight"] = 2
+config["itensity_weight"] = config["itensity_weight"]/4
 # creating a path to store the model outputs
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
     os.makedirs(f'{config["output_folder"]}/{config["model_name"]}')
@@ -69,7 +70,7 @@ strategy = MirroredStrategy()
 
 # Define the generator and discriminator within the strategy scope
 with strategy.scope():
-    generator = res_linear_activation(input_shape, output_shape, n_filters,
+    generator = res_linear_activation_bn(input_shape, output_shape, n_filters,
                                       kernel_size, n_channels, n_output_channels,
                                       resize=True)
 
@@ -125,7 +126,7 @@ with strategy.scope():
                                      he=tf.convert_to_tensor(he.values, 'float32'), gp_weight=config["gp_weight"],
                                      unet=unet_model,
                                      train_unet=True,
-                                     intensity_weight=config["itensity_weight"])
+                                     intensity_weight=config["itensity_weight"], signal_weight = config["signal_weight"])
 
     # Compile the WGAN model.
     wgan.compile(d_optimizer=discriminator_optimizer,

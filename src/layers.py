@@ -34,6 +34,52 @@ def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
                                 padding='same',
                                 name=name + '_1')(x)
 
+    #x1 = tf.keras.layers.BatchNormalization()(x1)
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)#tf.keras.layers.Activation('relu')(x1)
+    x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
+                                kernel_size=kernel_size,
+                                strides=strides[1],
+                                padding='same',
+                                name=name + '_2')(x1)
+
+    x = tf.keras.layers.Conv2D(filters=num_filters[-1],
+                               kernel_size=1,
+                               strides=1,
+                               padding='same',
+                               name=name + '_shortcut')(x)
+    # if bn:
+    #
+    #     x = tf.keras.layers.BatchNormalization()(x)
+
+    x1 = tf.keras.layers.Add()([x, x1])
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)
+    return x1
+
+
+def res_block_initial_generator(x, num_filters, kernel_size, strides, name,bn = False):
+    """Residual Unet block layer for first layer
+    In the residual unet the first residual block does not contain an
+    initial batch normalization and activation so we create this separate
+    block for it.
+    Args:
+        x: tensor, image or image activation
+        num_filters: list, contains the number of filters for each subblock
+        kernel_size: int, size of the convolutional kernel
+        strides: list, contains the stride for each subblock convolution
+        name: name of the layer
+    Returns:
+        x1: tensor, output from residual connection of x and x1
+    """
+
+    if len(num_filters) == 1:
+        num_filters = [num_filters[0], num_filters[0]]
+
+    x1 = tf.keras.layers.Conv2D(filters=num_filters[0],
+                                kernel_size=kernel_size,
+                                strides=strides[0],
+                                padding='same',
+                                name=name + '_1')(x)
+
     x1 = tf.keras.layers.BatchNormalization()(x1)
     x1 = tf.keras.layers.LeakyReLU(0.05)(x1)#tf.keras.layers.Activation('relu')(x1)
     x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
@@ -52,6 +98,7 @@ def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
     #     x = tf.keras.layers.BatchNormalization()(x)
 
     x1 = tf.keras.layers.Add()([x, x1])
+    x1 = tf.keras.layers.BatchNormalization()(x1)
     x1 = tf.keras.layers.LeakyReLU(0.05)(x1)
     return x1
 
@@ -102,6 +149,16 @@ def conv_block(x, filters, activation, kernel_size=(7, 7), strides=(2, 2), paddi
     return x
 
 
+def conv_block_generator(x, filters, activation, kernel_size=(7, 7), strides=(2, 2), padding="same",
+               use_bias=True, use_bn=True, use_dropout=True, drop_value=0.5):
+    x = layers.Conv2D(filters, kernel_size, strides=strides,
+                      padding=padding, use_bias=use_bias)(x)
+    x = layers.BatchNormalization()(x)
+    x = tf.keras.layers.LeakyReLU(0.05)(x)
+
+    return x
+
+
 def decoder_noise(x, num_filters, kernel_size, noise = False,bn =True):
     """Unet decoder
     Args:
@@ -117,5 +174,24 @@ def decoder_noise(x, num_filters, kernel_size, noise = False,bn =True):
         layer2 = 'decoder_layer_v2' + str(i)
         x = upsample(x, 2)
         x = res_block_initial(x, [num_filters[-i]], kernel_size, strides=[1, 1], name='decoder_layer_v2' + str(i))
+
+    return x, noise_inputs
+
+
+def decoder_noise_generator(x, num_filters, kernel_size, noise = False,bn =True):
+    """Unet decoder
+    Args:
+        x: tensor, output from previous layer
+        encoder_output: list, output from all previous encoder layers
+        num_filters: list, number of filters for each decoder layer
+        kernel_size: int, size of the convolutional kernel
+    Returns:
+        x: tensor, output from last layer of decoder
+    """
+    noise_inputs = []# at some intermediate layers
+    for i in range(1, len(num_filters) + 1):
+        layer2 = 'decoder_layer_v2' + str(i)
+        x = upsample(x, 2)
+        x = res_block_initial_generator(x, [num_filters[-i]], kernel_size, strides=[1, 1], name='decoder_layer_v2' + str(i))
 
     return x, noise_inputs

@@ -52,7 +52,7 @@ class WGAN_Cascaded_Residual_IP_CC_pres(keras.Model):
     def __init__(self, discriminator, generator, latent_dim,
                  discriminator_extra_steps=3, gp_weight=10.0, ad_loss_factor=1e-3,
                  latent_loss=5e-2, orog=None, he=None,
-                 vegt=None, unet=None, train_unet=True, intensity_weight = 1):
+                 vegt=None, unet=None, train_unet=True, intensity_weight = 1, signal_weight =1):
         super(WGAN_Cascaded_Residual_IP_CC_pres, self).__init__()
 
         self.discriminator = discriminator
@@ -68,6 +68,7 @@ class WGAN_Cascaded_Residual_IP_CC_pres(keras.Model):
         self.unet = unet
         self.train_unet = train_unet
         self.intensity_weight = intensity_weight
+        self.signal_weight = signal_weight
 
     def compile(self, d_optimizer, g_optimizer, d_loss_fn,
                 g_loss_fn, u_loss_fn, u_optimizer):
@@ -221,10 +222,12 @@ class WGAN_Cascaded_Residual_IP_CC_pres(keras.Model):
             #    tf.abs(maximum_intensity - maximum_intensity_predicted) ** 2)
             # Calculate the generator loss
             g_loss = adv_loss + adv_loss_future + gamma_loss_func + mae_future + self.intensity_weight * (tf.reduce_mean(
-                tf.abs(average_intensity - average_intensity_predicted)) ** 2 + tf.reduce_mean(
+                tf.abs(average_intensity - average_intensity_predicted)) ** 2 +tf.reduce_mean(
+                tf.abs(average_intensity_future - average_intensity_predicted_future)) ** 2)
+            + self.signal_weight * (tf.reduce_mean(
                 tf.abs(
-                    signal_preds - signal_gt)) ** 2+tf.reduce_mean(
-                tf.abs(average_intensity_future - average_intensity_predicted_future)) ** 2) ## + self.latent_loss * latent_loss
+                    signal_preds - signal_gt)) ** 2)
+            ## + self.latent_loss * latent_loss
 
         # Get the gradients w.r.t the generator loss
         gen_gradient = tape.gradient(g_loss, self.generator.trainable_variables)

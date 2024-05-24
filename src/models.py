@@ -294,6 +294,101 @@ def res_linear_activation(input_size, resize_output, num_filters, kernel_size, n
     return model
 
 
+def res_linear_activation_bn(input_size, resize_output, num_filters, kernel_size, num_channels, num_classes, resize=True,
+                          bn=True):
+    """
+    **Purpose:**
+      * To create a generator model that takes two streams of inputs, one from the low resolution predictor fields(X)
+      and auxilary inputs (topography), it also takes in the high-resolution "regression prediction",
+      which is used for residuals
+
+    **Parameters:**
+      * **input_size (tuple):**  The size of the 2D predictor fields over NZ region (default 23, 26)
+      * **resize_output (tuple):**  The size of the auxiliary fields (or the output fields), default is (172, 179)
+      * **num_filters (tuple):** The number of filters or residual blokcs in the network
+      * **num_classes (int): ** the number of output variables (i.e. for rainfall this is simply 1).
+      * **bn (bool): ** whether to use batch normalization or not
+      **num_channels (int): the number of predictor variables to be used to training the model.
+
+    **Returns:**
+        * a tf.keras.models.Model class
+
+    **Example Usage:**
+    ```python
+    generator = res_linear_activation((172, 179), (23, 26), [32, 64, 128, 256], 3, 8, resize = True, bn =True)
+
+    # note that resize and kernel size (3) are not currently used
+    ```
+    """
+    x = tf.keras.Input(shape=[input_size[0], input_size[1], num_channels]) # predictor variables X
+    img_input3 = layers.Input(shape=[resize_output[0], resize_output[1], 1]) # topography (RCM resolution)
+    img_input4 = layers.Input(shape=[resize_output[0], resize_output[1], 1]) # other auxiilary variables if needed
+    img_input5 = layers.Input(shape=[resize_output[0], resize_output[1], 1])
+    img_input6 = layers.Input(shape=[resize_output[0], resize_output[1], 1])# U-Net prediction (regression-baseline)
+    # input vectors
+    img_inputs = tf.keras.layers.Concatenate(-1)([img_input3, img_input6])  # img_input4, img_input5
+
+    # high-resolution information stream
+    x_init_ref_fields_high_res = conv_block_generator(img_inputs, 16, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
+                                            use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU(0.2))
+    x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields_high_res)
+
+    # lowering the importance of topography
+    x_init_ref_fields = conv_block_generator(x_init_ref_fields, 32, kernel_size=(3, 3), strides=(1, 1), use_bn=bn, use_bias=True,
+                                   use_dropout=False, drop_value=0.0, activation=tf.keras.layers.LeakyReLU(0.2))
+    x_init_ref_fields = tf.keras.layers.AveragePooling2D((2, 2))(x_init_ref_fields)
+    x_init_ref_fields = tf.image.resize(x_init_ref_fields, (input_size[0], input_size[1]),
+                                        method=tf.image.ResizeMethod.BILINEAR)
+    # this is now the same resolution as the input fields
+
+    # concat noise with inputs in this layer
+    noise = layers.Input(shape=(x.shape[1], x.shape[2], x.shape[3]))
+    concat_noise = tf.keras.layers.Concatenate(-1)([x, noise])  # this appears to be more stable
+    # add some noise within the GAN framework
+    x_output = res_block_initial_generator(concat_noise, [num_filters[-1]], 3, [1, 1], "input_layer", bn=bn)
+    # add the reference static fields as an input
+    x_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields, x_output])
+    decoder_output, noise_layers = decoder_noise_generator(x_output, num_filters[:-1], 5)
+    init_layer_fields = tf.image.resize(x_output, [decoder_output.shape[1], decoder_output.shape[2]],
+                          method=tf.image.ResizeMethod.BILINEAR)
+    # add the reference static fields as an input
+    decoder_output = tf.keras.layers.Concatenate(-1)([init_layer_fields, decoder_output])
+    # resizing the decoder output
+    # x_init_ref_fields_high_res_resized = tf.image.resize(x_init_ref_fields_high_res,
+    #                                                      (decoder_output.shape[-3], decoder_output.shape[-2]),
+    #                                                      method=tf.image.ResizeMethod.BILINEAR)
+    #decoder_output = tf.keras.layers.Concatenate(-1)([x_init_ref_fields_high_res_resized, decoder_outpu
+    decoder_output = res_block_initial_generator(decoder_output, [64], 3, [1, 1], "output_convbbb", bn=bn)
+    # we are predicting log of precipitation
+
+    # tf.keras.layers.Concatenate(-1)([alpha, beta, p_rainfall])
+    output = tf.image.resize(decoder_output, (resize_output[0], resize_output[1]),
+                             method=tf.image.ResizeMethod.BILINEAR)
+    output = tf.keras.layers.Concatenate(-1)([output, img_inputs])
+    output = res_block_initial_generator(output, [64], 3, [1, 1], "output_conv2341", bn=bn)
+    output = tf.keras.layers.Conv2D(64,
+                                    3,
+                                    strides=1,
+                                    padding='same',
+                                    name='custom_precip_layer', activation=tf.keras.layers.LeakyReLU(0.4))(output)
+    output = tf.keras.layers.Conv2D(16,
+                                    3,
+                                    strides=1,
+                                    padding='same',
+                                    name='custom_precip_layerb', activation=tf.keras.layers.LeakyReLU(0.4))(output)
+
+    output = tf.keras.layers.Conv2D(num_classes,
+                                    3,
+                                    strides=1,
+                                    padding='same',
+                                    name='custom_precip_layer2', activation='linear')(output)
+    input_layers = [noise] + [x, img_input3, img_input4, img_input5, img_input6]
+    # added multiple inputs into the tensorflow
+    # output = output + x_input
+    model = tf.keras.Model(input_layers, output)
+
+    return model
+
 def unet_linear(input_size, resize_output, num_filters, kernel_size, num_channels, num_classes, resize=True):
     """
     **Purpose:**
