@@ -70,7 +70,7 @@ strategy = MirroredStrategy()
 
 # Define the generator and discriminator within the strategy scope
 with strategy.scope():
-    generator = res_linear_activation_bn(input_shape, output_shape, n_filters,
+    generator = res_linear_activation(input_shape, output_shape, n_filters,
                                       kernel_size, n_channels, n_output_channels,
                                       resize=True)
 
@@ -115,7 +115,8 @@ with strategy.scope():
         learning_rate=config["learning_rate"], beta_1=config["beta_1"], beta_2=config["beta_2"])
     unet_optimizer = keras.optimizers.Adam(
         learning_rate=lr_schedule, beta_1=config["beta_1"], beta_2=config["beta_2"])
-
+    generator.summary()
+    unet_model.summary()
     wgan = WGAN_Cascaded_Residual_IP_CC_pres(discriminator=d_model,
                                      generator=generator,
                                      latent_dim=noise_dim,

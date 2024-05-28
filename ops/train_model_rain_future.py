@@ -32,7 +32,8 @@ kernel_size = config["kernel_size"]
 n_channels = config["n_input_channels"]
 n_output_channels = config["n_output_channels"]
 BATCH_SIZE = config["batch_size"]
-config['itensity_weight'] = 0.25
+config["itensity_weight"] = config["itensity_weight"]/4
+config["model_name"] = config["model_name"] + "_" + config["train_gcm"]
 # creating a path to store the model outputs
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
     os.makedirs(f'{config["output_folder"]}/{config["model_name"]}')
@@ -44,15 +45,22 @@ from src.gan import *
 from src.process_input_training_data import *
 # config["train_x"] = f"{tmp_dir}/{config['train_x'].split('/')[-1]}"
 # config["train_y"] = f"{tmp_dir}/{config['train_y'].split('/')[-1]}"
-stacked_X, y, vegt, orog, he = preprocess_input_data(config)
-stacked_X = stacked_X#.sel(GCM ='ACCESS-CM2')
-y = y#.sel(GCM ='ACCESS-CM2')
 
+
+stacked_X, y, vegt, orog, he = preprocess_input_data(config)
+stacked_X = stacked_X.sel(GCM =config["train_gcm"])
+y = y.sel(GCM =config["train_gcm"])[['pr']]
+print(y)
+print(stacked_X)
+if config["time_period"] == "historical":
+    y = y.sel(time = slice(None, "2014"))
+    stacked_X = stacked_X.sel(time = y.time.to_index().intersection(stacked_X.time.to_index()))
 
 with ProgressBar():
-    y = y.load()
+    y = y.load().transpose("time", "lat", "lon")
     stacked_X = stacked_X.transpose("time", "lat", "lon", "channel")
     stacked_X = stacked_X.load()
+
 strategy = MirroredStrategy()
 
 # Your model creation and training code goes here
@@ -104,7 +112,7 @@ with strategy.scope():
     unet_optimizer = keras.optimizers.Adam(
         learning_rate=lr_schedule, beta_1=config["beta_1"], beta_2=config["beta_2"])
 
-    wgan = WGAN_Cascaded_Residual_IP(discriminator=d_model,
+    wgan = WGAN_Cascaded_Residual_IP_CC_pres(discriminator=d_model,
                                      generator=generator,
                                      latent_dim=noise_dim,
                                      discriminator_extra_steps=config["discrim_steps"],
@@ -127,10 +135,27 @@ with strategy.scope():
     # Start training the model.
     # we normalize by a fixed normalization value
     total_size = stacked_X.time.size
-    eval_times = BATCH_SIZE * (total_size // BATCH_SIZE)
+    eval_times = BATCH_SIZE * ((total_size//2) // BATCH_SIZE)
 
-    data = tuple([tf.convert_to_tensor(np.log(y.pr[:eval_times].transpose("time", "lat", "lon").values*3600*24 + config["delta"]), 'float32'),
-                  tf.convert_to_tensor(stacked_X[:eval_times].values, 'float32')])
+    def create_dataset(y, X, eval_times):
+        output_vars = {
+            'tasmin': tf.convert_to_tensor(np.log(y.pr.values[:eval_times][::-1] *3600 * 24+config["delta"]), dtype=tf.float32),
+
+            'tasmin_future': tf.convert_to_tensor(np.log(y.pr.values[eval_times:2 * eval_times] * 3600 * 24 + config["delta"]), dtype=tf.float32)
+
+        }
+        X_tensor = {"X": tf.convert_to_tensor(X.values[:eval_times][::-1], dtype=tf.float32),
+                    "X_future": tf.convert_to_tensor(X.values[eval_times:2 * eval_times], dtype=tf.float32)}
+
+        return tf.data.Dataset.from_tensor_slices((output_vars, X_tensor))
+
+
+    data = create_dataset(y, stacked_X, eval_times)
+    options = tf.data.Options()
+    options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
+    data = data.with_options(options)
+    data = data.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    data = data.shuffle(16)
 
     with open(f'{config["output_folder"]}/{config["model_name"]}/config_info.json', 'w') as f:
         json.dump(config, f)

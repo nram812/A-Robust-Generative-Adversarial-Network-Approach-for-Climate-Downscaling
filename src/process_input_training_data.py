@@ -16,7 +16,7 @@ def prepare_training_data(config, X, y, means, stds, match_index = True):
 
     list_of_vars = config["var_names"]
     # normalize data
-    X_norm = (X[list_of_vars] - means) / stds
+    X_norm = (X[list_of_vars] - means.mean()) / stds.mean()
 
     stacked_X = xr.concat([X_norm[varname] for varname in list_of_vars], dim="channel")
     # stack features

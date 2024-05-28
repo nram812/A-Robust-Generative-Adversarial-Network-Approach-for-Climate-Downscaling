@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 
-def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
+def res_block_initial_gen(x, num_filters, kernel_size, strides, name,bn = False):
     """Residual Unet block layer for first layer
     In the residual unet the first residual block does not contain an
     initial batch normalization and activation so we create this separate
@@ -55,6 +55,51 @@ def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
     x1 = tf.keras.layers.LeakyReLU(0.05)(x1)
     return x1
 
+
+def res_block_initial(x, num_filters, kernel_size, strides, name,bn = False):
+    """Residual Unet block layer for first layer
+    In the residual unet the first residual block does not contain an
+    initial batch normalization and activation so we create this separate
+    block for it.
+    Args:
+        x: tensor, image or image activation
+        num_filters: list, contains the number of filters for each subblock
+        kernel_size: int, size of the convolutional kernel
+        strides: list, contains the stride for each subblock convolution
+        name: name of the layer
+    Returns:
+        x1: tensor, output from residual connection of x and x1
+    """
+
+    if len(num_filters) == 1:
+        num_filters = [num_filters[0], num_filters[0]]
+
+    x1 = tf.keras.layers.Conv2D(filters=num_filters[0],
+                                kernel_size=kernel_size,
+                                strides=strides[0],
+                                padding='same',
+                                name=name + '_1', kernel_regularizer = tf.keras.regularizers.l1(1e-3))(x)
+
+    #x1 = tf.keras.layers.BatchNormalization()(x1)
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)#tf.keras.layers.Activation('relu')(x1)
+    x1 = tf.keras.layers.Conv2D(filters=num_filters[1],
+                                kernel_size=kernel_size,
+                                strides=strides[1],
+                                padding='same',
+                                name=name + '_2', kernel_regularizer = tf.keras.regularizers.l1(1e-3))(x1)
+
+    x = tf.keras.layers.Conv2D(filters=num_filters[-1],
+                               kernel_size=1,
+                               strides=1,
+                               padding='same',
+                               name=name + '_shortcut', kernel_regularizer = tf.keras.regularizers.l1(1e-3))(x)
+    # if bn:
+    #
+    #     x = tf.keras.layers.BatchNormalization()(x)
+
+    x1 = tf.keras.layers.Add()([x, x1])
+    x1 = tf.keras.layers.LeakyReLU(0.05)(x1)
+    return x1
 
 def res_block_initial_generator(x, num_filters, kernel_size, strides, name,bn = False):
     """Residual Unet block layer for first layer

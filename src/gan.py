@@ -214,19 +214,19 @@ class WGAN_Cascaded_Residual_IP_CC_pres(keras.Model):
                 real_images_future, axis=[-1, -4])
             average_intensity_predicted_future = tf.math.reduce_mean(generated_images_future + init_prediction_unet_future,
                                                               axis=[-1, -4])
-            signal_preds = (average_intensity_future - average_intensity)
-            signal_gt = (average_intensity_predicted_future - average_intensity_predicted)
+            # signal_preds = (average_intensity_future - average_intensity)
+            # signal_gt = (average_intensity_predicted_future - average_intensity_predicted)
             adv_loss = self.ad_loss_factor * self.g_loss_fn(gen_img_logits)
             adv_loss_future = self.ad_loss_factor * self.g_loss_fn(gen_img_logits_future)
             # tf.reduce_mean(
             #    tf.abs(maximum_intensity - maximum_intensity_predicted) ** 2)
             # Calculate the generator loss
-            g_loss = adv_loss + adv_loss_future + gamma_loss_func + mae_future + self.intensity_weight * (tf.reduce_mean(
+            g_loss = 0.5 * (adv_loss + adv_loss_future + gamma_loss_func + mae_future) + self.intensity_weight * (tf.reduce_mean(
                 tf.abs(average_intensity - average_intensity_predicted)) ** 2 +tf.reduce_mean(
                 tf.abs(average_intensity_future - average_intensity_predicted_future)) ** 2)
-            + self.signal_weight * (tf.reduce_mean(
-                tf.abs(
-                    signal_preds - signal_gt)) ** 2)
+            # + self.signal_weight * (tf.reduce_mean(
+            #     tf.abs(
+            #         signal_preds - signal_gt)) ** 2)
             ## + self.latent_loss * latent_loss
 
         # Get the gradients w.r.t the generator loss
@@ -262,7 +262,7 @@ class WGAN_Cascaded_Residual_IP_CC_pres(keras.Model):
                                              orog_vector, he_vector, vegt_vector], training=True)
                 mae_unet = self.u_loss_fn(real_images_tasmin, init_prediction)
                 mae_unet_future = self.u_loss_fn(real_images_tasmin_f, init_prediction_future)
-                mae_total = mae_unet + mae_unet_future
+                mae_total = 0.5 * (mae_unet + mae_unet_future)
             u_gradient = tape.gradient(mae_total, self.unet.trainable_variables)
             # Update the weights of the generator using the generator optimizer
             self.u_optimizer.apply_gradients(zip(u_gradient, self.unet.trainable_variables))
