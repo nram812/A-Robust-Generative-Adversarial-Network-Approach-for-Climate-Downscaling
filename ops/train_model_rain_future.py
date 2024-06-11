@@ -32,7 +32,7 @@ kernel_size = config["kernel_size"]
 n_channels = config["n_input_channels"]
 n_output_channels = config["n_output_channels"]
 BATCH_SIZE = config["batch_size"]
-config["itensity_weight"] = config["itensity_weight"]/4
+# config["itensity_weight"] = config["itensity_weight"]*2
 config["model_name"] = config["model_name"] + "_" + config["train_gcm"]
 # creating a path to store the model outputs
 if not os.path.exists(f'{config["output_folder"]}/{config["model_name"]}'):
@@ -67,16 +67,17 @@ strategy = MirroredStrategy()
 
 # Define the generator and discriminator within the strategy scope
 with strategy.scope():
-    generator = res_linear_activation(input_shape, output_shape, n_filters,
+    n_filters = n_filters#+ [512]
+    generator = res_linear_activation_v2(input_shape, output_shape, n_filters[:],
                                       kernel_size, n_channels, n_output_channels,
-                                      resize=True)
+                                      resize=True, final_activation=tf.keras.layers.LeakyReLU(0.6))
 
-    unet_model = unet_linear(input_shape, output_shape, n_filters,
+    unet_model = unet_linear_v2(input_shape, output_shape, n_filters,
                                  kernel_size, n_channels, n_output_channels,
-                                 resize=True)
+                                 resize=True, final_activation=tf.keras.layers.LeakyReLU(0.2))
 
     noise_dim = [tuple(generator.inputs[i].shape[1:]) for i in range(len(generator.inputs) - 1)]
-    d_model = get_discriminator_model(tuple(output_shape) + (n_output_channels,),
+    d_model = get_discriminator_model_v1(tuple(output_shape) + (n_output_channels,),
                                       tuple(input_shape) + (n_channels,))
 
 
@@ -112,14 +113,21 @@ with strategy.scope():
     unet_optimizer = keras.optimizers.Adam(
         learning_rate=lr_schedule, beta_1=config["beta_1"], beta_2=config["beta_2"])
 
-    wgan = WGAN_Cascaded_Residual_IP_CC_pres(discriminator=d_model,
+    # Start training the model.
+    # we normalize by a fixed normalization value
+    total_size = stacked_X.time.size
+    #eval_times = BATCH_SIZE * ((total_size//2) // BATCH_SIZE)
+    eval_times = BATCH_SIZE * (total_size//BATCH_SIZE)
+
+    wgan = WGAN_Cascaded_IP(discriminator=d_model,
                                      generator=generator,
                                      latent_dim=noise_dim,
                                      discriminator_extra_steps=config["discrim_steps"],
                                      ad_loss_factor=config["ad_loss_factor"],
                                      orog=tf.convert_to_tensor(orog.values, 'float32'),
                                      vegt=tf.convert_to_tensor(vegt.values, 'float32'),
-                                     he=tf.convert_to_tensor(he.values, 'float32'), gp_weight=config["gp_weight"],
+                                     he=tf.convert_to_tensor(he.values, 'float32'),
+                                     gp_weight=config["gp_weight"],
                                      unet=unet_model,
                                      train_unet=True,
                                      intensity_weight=config["itensity_weight"])
@@ -134,33 +142,40 @@ with strategy.scope():
 
     # Start training the model.
     # we normalize by a fixed normalization value
-    total_size = stacked_X.time.size
-    eval_times = BATCH_SIZE * ((total_size//2) // BATCH_SIZE)
 
-    def create_dataset(y, X, eval_times):
-        output_vars = {
-            'tasmin': tf.convert_to_tensor(np.log(y.pr.values[:eval_times][::-1] *3600 * 24+config["delta"]), dtype=tf.float32),
-
-            'tasmin_future': tf.convert_to_tensor(np.log(y.pr.values[eval_times:2 * eval_times] * 3600 * 24 + config["delta"]), dtype=tf.float32)
-
-        }
-        X_tensor = {"X": tf.convert_to_tensor(X.values[:eval_times][::-1], dtype=tf.float32),
-                    "X_future": tf.convert_to_tensor(X.values[eval_times:2 * eval_times], dtype=tf.float32)}
-
-        return tf.data.Dataset.from_tensor_slices((output_vars, X_tensor))
-
-
-    data = create_dataset(y, stacked_X, eval_times)
-    options = tf.data.Options()
-    options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
-    data = data.with_options(options)
-    data = data.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
-    data = data.shuffle(16)
+    data = tuple([tf.convert_to_tensor(np.log(y.pr[:eval_times].transpose("time", "lat", "lon").values * 3600 * 24 + config["delta"]), 'float32'),
+                  tf.convert_to_tensor(stacked_X[:eval_times].values, 'float32')])
 
     with open(f'{config["output_folder"]}/{config["model_name"]}/config_info.json', 'w') as f:
         json.dump(config, f)
 
-    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=1, shuffle=True,
+    wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=2, shuffle=True,
              callbacks=[generator_checkpoint, discriminator_checkpoint, unet_checkpoint])
+
+    # def create_dataset(y, X, eval_times):
+    #     output_vars = {
+    #         'tasmin': tf.convert_to_tensor(np.log(y.pr.values[:eval_times][::-1] *3600 * 24+config["delta"]), dtype=tf.float32),
+    #
+    #         'tasmin_future': tf.convert_to_tensor(np.log(y.pr.values[eval_times:2 * eval_times] * 3600 * 24 + config["delta"]), dtype=tf.float32)
+    #
+    #     }
+    #     X_tensor = {"X": tf.convert_to_tensor(X.values[:eval_times][::-1], dtype=tf.float32),
+    #                 "X_future": tf.convert_to_tensor(X.values[eval_times:2 * eval_times], dtype=tf.float32)}
+    #
+    #     return tf.data.Dataset.from_tensor_slices((output_vars, X_tensor))
+    #
+    #
+    # data = create_dataset(y, stacked_X, eval_times)
+    # options = tf.data.Options()
+    # options.experimental_distribute.auto_shard_policy = tf.data.experimental.AutoShardPolicy.DATA
+    # data = data.with_options(options)
+    # data = data.batch(BATCH_SIZE).prefetch(tf.data.AUTOTUNE)
+    # data = data.shuffle(16)
+
+    # with open(f'{config["output_folder"]}/{config["model_name"]}/config_info.json', 'w') as f:
+    #     json.dump(config, f)
+    #
+    # wgan.fit(data, batch_size=BATCH_SIZE, epochs=config["epochs"], verbose=1, shuffle=True,
+    #          callbacks=[generator_checkpoint, discriminator_checkpoint, unet_checkpoint])
 
 

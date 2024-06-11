@@ -58,6 +58,9 @@ y['tasmin'] = (y['tasmin'] - output_means['tasmin'].mean())/output_stds['tasmin'
 #config['tmin_min_value'] = float(min_value.values)
 #y['tasmin'] = y['tasmin'] - min_value
 # to stop the issues of negative values
+if config["time_period"] == "historical":
+    y = y.sel(time = slice(None, "2014"))
+    stacked_X = stacked_X.sel(time = y.time.to_index().intersection(stacked_X.time.to_index()))
 
 with ProgressBar():
     y = y.load()
@@ -69,35 +72,35 @@ strategy = MirroredStrategy()
 
 # Define the generator and discriminator within the strategy scope
 with strategy.scope():
-    generator = res_linear_activation_bn(input_shape, output_shape, n_filters,
+    generator = res_linear_activation_v2(input_shape, output_shape, n_filters[:],
                                       kernel_size, n_channels, n_output_channels,
-                                      resize=True)
+                                      resize=True,
+                                      final_activation = tf.keras.layers.LeakyReLU(1))
 
     unet_model = unet_linear(input_shape, output_shape, n_filters,
                                  kernel_size, n_channels, n_output_channels,
                                  resize=True)
 
     noise_dim = [tuple(generator.inputs[i].shape[1:]) for i in range(len(generator.inputs) - 1)]
-    d_model = get_discriminator_model(tuple(output_shape) + (n_output_channels,),
+    d_model = get_discriminator_model_v1(tuple(output_shape) + (n_output_channels,),
                                       tuple(input_shape) + (n_channels,))
-
 
     generator_checkpoint = GeneratorCheckpoint(
         generator=generator,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/generator',
-        period=3  # Save every 5 epochs
+        period=5  # Save every 5 epochs
     )
 
     discriminator_checkpoint = DiscriminatorCheckpoint(
         discriminator=d_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/discriminator',
-        period=3  # Save every 5 epochs
+        period=5  # Save every 5 epochs
     )
 
     unet_checkpoint = DiscriminatorCheckpoint(
         discriminator=unet_model,
         filepath=f'{config["output_folder"]}/{config["model_name"]}/unet',
-        period=3  # Save every 5 epochs
+        period=5  # Save every 5 epochs
     )
 
     lr_schedule = tf.keras.optimizers.schedules.ExponentialDecay(
@@ -114,7 +117,7 @@ with strategy.scope():
     unet_optimizer = keras.optimizers.Adam(
         learning_rate=lr_schedule, beta_1=config["beta_1"], beta_2=config["beta_2"])
 
-    wgan = WGAN_Cascaded_Residual_IP(discriminator=d_model,
+    wgan = WGAN_Cascaded_IP(discriminator=d_model,
                                      generator=generator,
                                      latent_dim=noise_dim,
                                      discriminator_extra_steps=config["discrim_steps"],

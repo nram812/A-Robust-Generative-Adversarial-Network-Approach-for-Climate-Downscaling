@@ -15,14 +15,14 @@ AUTOTUNE = tf.data.experimental.AUTOTUNE
 from dask.diagnostics import ProgressBar
 import pandas as pd
 import sys
+os.chdir(r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling')
 sys.path.append(os.getcwd())
 from src.layers import *
 from src.models import *
 from src.gan import *
+from src.process_input_training_data import *
 from ops.model_inference.src_eval_inference import *
-config_file = sys.argv[-1]
-
-
+config_file = r'/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/models/historical_run_precip_residual_new_unet_shuffle_off_new_iten_weight_new_padding_new_unet_V2_resid_now_01_iten_ACCESS-CM2/config_info.json'
 
 # y['tasmin'] = (y['tasmin'] - output_means['tasmin'])/output_stds['tasmin']
 # min_value = y.tasmin.min()
@@ -70,50 +70,35 @@ def compute_signal(df, quantiles, historical_period, future_period):
 config["train_x"] ="/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/predictor_fields/predictor_fields_hist_ssp370_merged_updated.nc"
 config["train_y"] = "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/target_fields/target_fields_hist_ssp370_concat.nc"
 stacked_X, y, vegt, orog, he = preprocess_input_data(config, match_index =False)
-
-gan, unet, adv_factor = load_model_cascade(config["model_name"], None, './models', load_unet=True)
-try:
-    y = y.isel(GCM =0)[['pr']]
-except:
-    y =y[['pr']]
+with tf.device('/CPU:0'):
+    gan, unet, adv_factor = load_model_cascade(config["model_name"], None, './models', load_unet=True)
+# try:
+#     y = y.isel(GCM =0)[['pr']]
+# except:
+#     y =y[['pr']]
 for gcm in stacked_X.GCM.values:
     print(f"prepraring data fpr a GCM {gcm}")
-    output_shape = create_output(stacked_X, y)
-    output_shape.pr.values = output_shape.pr.values * 0.0
-    output_hist = xr.concat([predict_parallel_resid(gan, unet,
-                                   stacked_X.sel( GCM =gcm).transpose('time','lat','lon','channel').sel(time = historical_period).values,
-                                   output_shape.sel(time = historical_period), 64, orog.values, he.values, vegt.values, model_type='GAN') for i in range(10)],
-                            dim ="member")
-    output_hist_reg = xr.concat([predict_parallel_resid(gan, unet,
-                                   stacked_X.sel( GCM =gcm).transpose('time','lat','lon','channel').sel(time = historical_period).values,
-                                   output_shape.sel(time = historical_period), 64, orog.values, he.values, vegt.values, model_type='UNET') for i in range(1)],
-                            dim ="member")
+    with tf.device('/CPU:0'):
+        output_shape = create_output(stacked_X.isel(time = slice(0, 300)), y.isel(time = slice(0, 300)))
+        output_shape.pr.values = output_shape.pr.values * 0.0
+        output_hist = xr.concat([predict_parallel_resid(gan, unet,
+                                       stacked_X.sel( GCM =gcm).transpose('time','lat','lon','channel').isel(time = slice(0, 300)).values,
+                                       output_shape[['pr']].isel(time = slice(0, 300)).sel(GCM = gcm), 8, orog.values, he.values, vegt.values, model_type='GAN') for i in range(1)],
+                                dim ="member")
 
-    output_future = xr.concat([predict_parallel_resid(gan, unet,
-                                         stacked_X.sel(GCM=gcm).transpose('time', 'lat', 'lon', 'channel').sel(
-                                             time=future_period).values,
-                                         output_shape.sel(time=future_period), 64, orog.values, he.values,
-                                         vegt.values, model_type='GAN') for i in range(10)], dim ="member")
-    output_future_reg = xr.concat([predict_parallel_resid(gan, unet,
-                                         stacked_X.sel(GCM=gcm).transpose('time', 'lat', 'lon', 'channel').sel(
-                                             time=future_period).values,
-                                         output_shape.sel(time=future_period), 64, orog.values, he.values,
-                                         vegt.values, model_type='UNET') for i in range(1)], dim ="member")
-    outputs = xr.concat([output_hist, output_future], dim ="time")
-    outputs_reg = xr.concat([output_hist_reg, output_future_reg], dim="time")
-    outputs_test = outputs.sel(time = slice("2098","2099"))
-    outputs_reg_test = outputs_reg.sel(time=slice("2098", "2099"))
-    outputs = compute_signal(outputs[['pr']], quantiles, historical_period, future_period)
-    outputs_reg = compute_signal(outputs_reg[['pr']], quantiles, historical_period, future_period)
-    #outputs.attrs['title'] = outputs.attrs['title'] + f'   /n ML Emulated NIWA-REMS GAN v1 GCM: {gcm}'
-    if not os.path.exists(f'./outputs/{config["model_name"]}'):
-        os.makedirs(f'./outputs/{config["model_name"]}')
-    outputs.to_netcdf(f'./outputs/{config["model_name"]}/CCAM_NIWA-REMS_{gcm}_hist_ssp370_pr_ens.nc')
-    outputs_reg.to_netcdf(f'./outputs/{config["model_name"]}/CCAM_NIWA-REMS_{gcm}_hist_ssp370_pr_unet.nc')
-    outputs_test.to_netcdf(f'./outputs/{config["model_name"]}/CCAM_NIWA-REMS_{gcm}_hist_ssp370_pr_ens_test_sample.nc')
-    outputs_reg_test.to_netcdf(f'./outputs/{config["model_name"]}/CCAM_NIWA-REMS_{gcm}_hist_ssp370_pr_unet_test_sample.nc')
-    with open(f'./outputs/{config["model_name"]}/config_info.json', 'w') as f:
-        json.dump(config, f)
+    # output_future = xr.concat([predict_parallel_resid(gan, unet,
+    #                                      stacked_X.sel(GCM=gcm).transpose('time', 'lat', 'lon', 'channel').sel(
+    #                                          time=future_period).values,
+    #                                      output_shape.sel(time=future_period), 64, orog.values, he.values,
+    #                                      vegt.values, model_type='GAN') for i in range(1)], dim ="member")
+    # outputs = xr.concat([output_hist, output_future], dim ="time")
+    # outputs = compute_signal(outputs[['pr']], quantiles, historical_period, future_period)
+    # #outputs.attrs['title'] = outputs.attrs['title'] + f'   /n ML Emulated NIWA-REMS GAN v1 GCM: {gcm}'
+    # if not os.path.exists(f'./outputs/{config["model_name"]}'):
+    #     os.makedirs(f'./outputs/{config["model_name"]}')
+    # outputs.to_netcdf(f'./outputs/{config["model_name"]}/CCAM_NIWA-REMS_{gcm}_hist_ssp370_pr_ens.nc')
+    # with open(f'./outputs/{config["model_name"]}/config_info.json', 'w') as f:
+    #     json.dump(config, f)
 
     # with tf.device('/CPU:0'):
     #     outputs = predict_parallel_resid(gan, unet,
@@ -128,10 +113,33 @@ for gcm in stacked_X.GCM.values:
         # validation_metrics.to_netcdf(f'{output_dir}/{model}_hist_1986_2005_cascaded_imperfect_applied_val_metrics.nc')
 
         # load the perfect conditions
-# df = xr.open_dataset("/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/target_fields/target_fields_hist_ssp370_concat.nc")
-# hist_period_output = df.sel(time =historical_period)[['pr']]
-# future_period_output = df.sel(time =future_period)[['pr']]
-# concat = xr.concat([hist_period_output, future_period_output], dim="time")
-#
-# with ProgressBar():
-#     outputs = compute_signal(concat[['pr']], quantiles, historical_period, future_period)
+times = output_hist.time.to_index().intersection(y.time.to_index())
+output_hist = output_hist.sel(time = times)
+y1 = y.sel(time = times)
+time =31
+fig, ax = plt.subplots(1,2, figsize = (12, 8))
+output_hist.pr.isel(time =time).plot(ax=ax[0], cmap ='jet', vmin =0, vmax =90)
+
+((y1).pr.isel(time =time).sel( GCM =gcm)*86400).plot(ax=ax[1], cmap ='jet', vmin =0, vmax =90)
+fig.show()
+
+corrs = xr.corr(output_hist.pr, y1.pr.sel(GCM =gcm), dim ="time")
+fig, ax = plt.subplots()
+corrs.plot(ax = ax)
+fig.show()
+
+fig, ax = plt.subplots(1,2, figsize = (12, 8))
+output_hist.groupby('time.season').mean().pr.isel(season =1).plot(cmap ='BrBG', ax = ax[0], vmax =6)
+(y1.pr *86400).sel(time = output_hist.time, GCM =gcm).groupby('time.season').mean().isel(season =1).plot(cmap ='BrBG', ax = ax[1], vmax =6)
+fig.show()
+
+
+
+import seaborn as sns
+bins = np.arange(0,600,10)
+fig,ax = plt.subplots()
+sns.histplot(output_hist.pr.values.ravel(), bins = bins, ax = ax, label ='Emulator', color ='r', alpha =0.5)
+sns.histplot(y1.pr.sel(time = output_hist.time, GCM =gcm).values.ravel() * 86400, bins = bins, ax = ax, label ='Emulator', color ='b', alpha =0.5)
+ax.set_yscale('log')
+ax.legend()
+fig.show()

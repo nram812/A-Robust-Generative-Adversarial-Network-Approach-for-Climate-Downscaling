@@ -19,7 +19,7 @@ from src.models import *
 from src.gan import *
 from src.process_input_training_data import *
 from tensorflow.keras import layers
-
+from src.process_input_training_data import *
 
 def create_output(X, y):
     y = y.isel(time=0).drop("time")
@@ -28,19 +28,20 @@ def create_output(X, y):
     return y
 # changed activation function to hyperbolic tangent
 
+
 def load_model_cascade(model_name, epoch, model_dir, load_unet=True):
     gan = tf.keras.models.load_model(f'{model_dir}/{model_name}/generator_final.h5',
-                                     custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D},
+                                     custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D,
+                                                     "SymmetricPadding2D": SymmetricPadding2D},
                                      compile=False)
     with open(f'{model_dir}/{model_name}/config_info.json') as f:
         config = json.load(f)
-    if load_unet:
-        unet = tf.keras.models.load_model(f'{model_dir}/{model_name}/unet_final.h5',
-                                          custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D}, compile=False)
 
-        return gan, unet, config["ad_loss_factor"]
-    else:
-        return gan, config["ad_loss_factor"]
+        unet = tf.keras.models.load_model(f'{model_dir}/{model_name}/unet_final.h5',
+                                          custom_objects={"BicubicUpSampling2D": BicubicUpSampling2D,
+                                                          "SymmetricPadding2D": SymmetricPadding2D}, compile=False)
+
+    return gan, unet, config["ad_loss_factor"]
 
 
 def load_data_historical(model, output_config_name):
@@ -148,6 +149,20 @@ def predict_batch_residual(model, unet, latent_vectors, data_batch, orog, he, ve
     else:
         return unet([latent_vectors[0], data_batch, orog, he, vegt], training=False)
 
+@tf.function
+def predict_batch_residual_v2(model, unet, latent_vectors, data_batch, orog, he, vegt, model_type):
+    if model_type == 'GAN':
+        intermediate = unet([latent_vectors[0], data_batch, orog, he, vegt], training=False)
+        # intermediate = apply_gaussian_blur(intermediate, size=7, sigma=1.5)
+        # max_value = tf.reduce_max(intermediate, axis=(1, 2, 3), keepdims=True)
+        # min_value = tf.reduce_min(intermediate, axis=(1, 2, 3), keepdims=True)
+        init_prediction = intermediate
+        # print(intermediate)
+        # intermediate = tf.cast(tf.math.sqrt(tf.clip_by_value(intermediate, clip_value_min=0, clip_value_max=2500)), 'float32')
+        return model([latent_vectors[0], data_batch, orog, he, vegt, init_prediction],
+                     training=False)# + intermediate  # +
+    else:
+        return unet([latent_vectors[0], data_batch, orog, he, vegt], training=False)
 
 def predict_parallel_resid(model, unet, inputs, output_shape, batch_size, orog_vector, he_vector, vegt_vector,
                            model_type='GAN'):
@@ -168,7 +183,7 @@ def predict_parallel_resid(model, unet, inputs, output_shape, batch_size, orog_v
             output = predict_batch_residual(model, unet, [random_latent_vectors1], data_batch, orog, he, vegt,
                                             model_type)
 
-            dset += (np.exp(output.numpy()[:, :, :, 0]) - 0.001).tolist()
+            dset += (np.exp(output.numpy()[:, :, :, 0]) - 0.01).tolist()
             pbar.update(1)  # Update the progress bar
 
     if remainder != 0:
@@ -181,7 +196,7 @@ def predict_parallel_resid(model, unet, inputs, output_shape, batch_size, orog_v
         output = predict_batch_residual(model, unet, [random_latent_vectors1[:remainder]],
                                         inputs[inputs.shape[0] - remainder:], orog, he, vegt, model_type)
 
-        dset += (np.exp(output.numpy()[:, :, :, 0]) - 0.001).tolist()
+        dset += (np.exp(output.numpy()[:, :, :, 0]) - 0.01).tolist()
     output_shape['pr'].values = dset
 
     return output_shape
@@ -206,8 +221,8 @@ def predict_parallel_resid_t(model, unet, inputs, output_shape, batch_size, orog
             output = predict_batch_residual(model, unet, [random_latent_vectors1], data_batch, orog, he, vegt,
                                             model_type)
 
-            dset += ((output.numpy()[:, :, :, 0]+ config['tmin_min_value']) * (output_stds['tasmin'].values) + output_means[
-                'tasmin'].values).tolist()
+            dset += ((output.numpy()[:, :, :, 0]) * (output_stds['tasmin'].mean().values) + output_means[
+                'tasmin'].mean().values).tolist()
 
             pbar.update(1)  # Update the progress bar
 
@@ -221,9 +236,9 @@ def predict_parallel_resid_t(model, unet, inputs, output_shape, batch_size, orog
         output = predict_batch_residual(model, unet, [random_latent_vectors1[:remainder]],
                                         inputs[inputs.shape[0] - remainder:], orog, he, vegt, model_type)
 
-        dset += ((output.numpy()[:, :, :, 0] + config['tmin_min_value']) * (output_stds['tasmin'].values) +
+        dset += ((output.numpy()[:, :, :, 0]) * (output_stds['tasmin'].mean().values) +
                  output_means[
-                     'tasmin'].values).tolist()
+                     'tasmin'].mean().values).tolist()
     output_shape['pr'].values = dset
 
     return output_shape
