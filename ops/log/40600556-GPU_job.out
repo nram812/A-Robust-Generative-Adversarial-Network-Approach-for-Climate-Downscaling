@@ -1,0 +1,125 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "OCI/12.2"
+   Try: "module spider OCI/12.2" to see how to load the module(s).
+
+
+
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "OCI/12.2"
+   Try: "module spider OCI/12.2" to see how to load the module(s).
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) slurm   2) NIWA
+Lmod has detected the following error: Cannot load module "NeSI" because these
+module(s) are loaded:
+   NIWA
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NeSI             /opt/nesi/modulefiles/NeSI.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Fri May  3 19:02:28 2024       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.104.05             Driver Version: 535.104.05   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-SXM4-80GB          Off | 00000000:01:00.0 Off |                    0 |
+| N/A   29C    P0              71W / 500W |    738MiB / 81920MiB |      4%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   1  NVIDIA A100-SXM4-80GB          Off | 00000000:41:00.0 Off |                    0 |
+| N/A   26C    P0              56W / 500W |      4MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   2  NVIDIA A100-SXM4-80GB          Off | 00000000:81:00.0 Off |                    0 |
+| N/A   27C    P0              56W / 500W |      4MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   3  NVIDIA A100-SXM4-80GB          Off | 00000000:C1:00.0 Off |                   On |
+| N/A   32C    P0             116W / 500W |   9557MiB / 81920MiB |     N/A      Default |
+|                                         |                      |              Enabled |
++-----------------------------------------+----------------------+----------------------+
+
++---------------------------------------------------------------------------------------+
+| MIG devices:                                                                          |
++------------------+--------------------------------+-----------+-----------------------+
+| GPU  GI  CI  MIG |                   Memory-Usage |        Vol|      Shared           |
+|      ID  ID  Dev |                     BAR1-Usage | SM     Unc| CE ENC DEC OFA JPG    |
+|                  |                                |        ECC|                       |
+|==================+================================+===========+=======================|
+|  3    7   0   0  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3    8   0   1  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3    9   0   2  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3   10   0   3  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3   11   0   4  |            9482MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               2MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3   12   0   5  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+|  3   13   0   6  |              12MiB /  9728MiB  | 14      0 |  1   0    0    0    0 |
+|                  |               0MiB / 16383MiB  |           |                       |
++------------------+--------------------------------+-----------+-----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A    437572      C   python                                      724MiB |
+|    3   11    0     836214      C   python                                     9462MiB |
++---------------------------------------------------------------------------------------+
+2024-05-03 19:03:17.606803: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+<xarray.DataArray 'orog' ()>
+array(1733.36035156) <xarray.DataArray 'he' ()>
+array(1157.46264648) <xarray.DataArray 'vegt' ()>
+array(17.00000763)
+Traceback (most recent call last):
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/indexing.py", line 69, in group_indexers_by_index
+    index = xindexes[key]
+KeyError: 'GCM'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "ops/train_model_rain_future.py", line 47, in <module>
+    stacked_X = stacked_X.sel(GCM ='ACCESS-CM2')
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/dataarray.py", line 1315, in sel
+    ds = self._to_temp_dataset().sel(
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/dataset.py", line 2474, in sel
+    pos_indexers, new_indexes = remap_label_indexers(
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/coordinates.py", line 421, in remap_label_indexers
+    pos_indexers, new_indexes = indexing.remap_label_indexers(
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/indexing.py", line 106, in remap_label_indexers
+    indexes, grouped_indexers = group_indexers_by_index(
+  File "/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/xarray/core/indexing.py", line 82, in group_indexers_by_index
+    raise KeyError(f"{key} is not a valid dimension or coordinate")
+KeyError: 'GCM is not a valid dimension or coordinate'

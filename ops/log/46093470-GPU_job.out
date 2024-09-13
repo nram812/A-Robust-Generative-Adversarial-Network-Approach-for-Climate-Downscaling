@@ -1,0 +1,219 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: Cannot load module "NIWA" because these
+module(s) are loaded:
+   NeSI
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NIWA             /opt/nesi/modulefiles/NIWA.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Fri May  3 14:12:04 2024       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA A100-SXM...  On   | 00000000:C7:00.0 Off |                    0 |
+| N/A   41C    P0    65W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+2024-05-03 14:12:12.814886: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+<xarray.DataArray 'orog' ()>
+array(1733.36035156) <xarray.DataArray 'he' ()>
+array(1157.46264648) <xarray.DataArray 'vegt' ()>
+array(17.00000763)
+[                                        ] | 0% Completed |  0.0s[                                        ] | 0% Completed |  0.1s[                                        ] | 0% Completed |  0.2s[                                        ] | 0% Completed |  0.3s[                                        ] | 0% Completed |  0.4s[                                        ] | 0% Completed |  0.5s[                                        ] | 0% Completed |  0.6s[                                        ] | 0% Completed |  0.7s[                                        ] | 1% Completed |  0.8s[#                                       ] | 2% Completed |  0.9s[#                                       ] | 2% Completed |  1.0s[#                                       ] | 2% Completed |  1.1s[#                                       ] | 3% Completed |  1.2s[##                                      ] | 5% Completed |  1.3s[##                                      ] | 5% Completed |  1.4s[###                                     ] | 7% Completed |  1.5s[###                                     ] | 9% Completed |  1.6s[###                                     ] | 9% Completed |  1.7s[####                                    ] | 10% Completed |  1.8s[####                                    ] | 11% Completed |  1.9s[#####                                   ] | 14% Completed |  2.0s[#####                                   ] | 14% Completed |  2.1s[#####                                   ] | 14% Completed |  2.2s[######                                  ] | 15% Completed |  2.3s[######                                  ] | 15% Completed |  2.4s[######                                  ] | 16% Completed |  2.5s[#######                                 ] | 18% Completed |  2.6s[#######                                 ] | 19% Completed |  2.7s[#######                                 ] | 19% Completed |  2.8s[########                                ] | 20% Completed |  2.9s[########                                ] | 20% Completed |  3.0s[########                                ] | 22% Completed |  3.1s[#########                               ] | 23% Completed |  3.2s[#########                               ] | 23% Completed |  3.3s[##########                              ] | 25% Completed |  3.4s[##########                              ] | 27% Completed |  3.5s[###########                             ] | 28% Completed |  3.6s[###########                             ] | 28% Completed |  3.7s[###########                             ] | 28% Completed |  3.8s[###########                             ] | 28% Completed |  3.9s[###########                             ] | 28% Completed |  4.0s[###########                             ] | 28% Completed |  4.1s[###########                             ] | 28% Completed |  4.2s[###########                             ] | 28% Completed |  4.3s[###########                             ] | 28% Completed |  4.4s[###########                             ] | 28% Completed |  4.5s[###########                             ] | 28% Completed |  4.6s[###########                             ] | 28% Completed |  4.7s[###########                             ] | 28% Completed |  4.8s[###########                             ] | 28% Completed |  5.0s[###########                             ] | 28% Completed |  5.1s[###########                             ] | 28% Completed |  5.2s[###########                             ] | 28% Completed |  5.3s[###########                             ] | 28% Completed |  5.4s[###########                             ] | 28% Completed |  5.5s[###########                             ] | 28% Completed |  5.6s[###########                             ] | 29% Completed |  5.7s[###########                             ] | 29% Completed |  5.8s[###########                             ] | 29% Completed |  5.9s[###########                             ] | 29% Completed |  6.0s[###########                             ] | 29% Completed |  6.1s[###########                             ] | 29% Completed |  6.2s[############                            ] | 31% Completed |  6.3s[############                            ] | 31% Completed |  6.4s[############                            ] | 31% Completed |  6.5s[############                            ] | 32% Completed |  6.6s[############                            ] | 32% Completed |  6.7s[#############                           ] | 33% Completed |  6.8s[##############                          ] | 35% Completed |  6.9s[##############                          ] | 36% Completed |  7.0s[###############                         ] | 37% Completed |  7.1s[###############                         ] | 38% Completed |  7.2s[################                        ] | 40% Completed |  7.3s[################                        ] | 41% Completed |  7.4s[#################                       ] | 42% Completed |  7.5s[#################                       ] | 42% Completed |  7.6s[#################                       ] | 44% Completed |  7.7s[#################                       ] | 44% Completed |  7.8s[#################                       ] | 44% Completed |  7.9s[#################                       ] | 44% Completed |  8.0s[#################                       ] | 44% Completed |  8.1s[##################                      ] | 45% Completed |  8.2s[##################                      ] | 46% Completed |  8.3s[##################                      ] | 46% Completed |  8.4s[##################                      ] | 46% Completed |  8.5s[##################                      ] | 46% Completed |  8.6s[##################                      ] | 46% Completed |  8.7s[###################                     ] | 49% Completed |  8.8s[###################                     ] | 49% Completed |  8.9s[####################                    ] | 50% Completed |  9.0s[####################                    ] | 51% Completed |  9.1s[#####################                   ] | 54% Completed |  9.2s[######################                  ] | 55% Completed |  9.3s[######################                  ] | 57% Completed |  9.4s[######################                  ] | 57% Completed |  9.5s[######################                  ] | 57% Completed |  9.6s[######################                  ] | 57% Completed |  9.7s[#######################                 ] | 58% Completed |  9.8s[#######################                 ] | 59% Completed | 10.0s[########################                ] | 61% Completed | 10.1s[########################                ] | 62% Completed | 10.2s[########################                ] | 62% Completed | 10.3s[#########################               ] | 64% Completed | 10.4s[#########################               ] | 64% Completed | 10.5s[#########################               ] | 64% Completed | 10.6s[###########################             ] | 67% Completed | 10.7s[############################            ] | 70% Completed | 10.8s[############################            ] | 70% Completed | 10.9s[############################            ] | 71% Completed | 11.0s[############################            ] | 71% Completed | 11.1s[############################            ] | 71% Completed | 11.2s[############################            ] | 71% Completed | 11.3s[############################            ] | 71% Completed | 11.4s[############################            ] | 71% Completed | 11.5s[############################            ] | 71% Completed | 11.6s[############################            ] | 71% Completed | 11.7s[############################            ] | 71% Completed | 11.8s[############################            ] | 71% Completed | 11.9s[############################            ] | 71% Completed | 12.0s[############################            ] | 71% Completed | 12.1s[############################            ] | 71% Completed | 12.2s[############################            ] | 71% Completed | 12.3s[############################            ] | 71% Completed | 12.4s[#############################           ] | 72% Completed | 12.5s[#############################           ] | 72% Completed | 12.6s[#############################           ] | 72% Completed | 12.7s[#############################           ] | 72% Completed | 12.8s[#############################           ] | 72% Completed | 12.9s[#############################           ] | 72% Completed | 13.0s[#############################           ] | 72% Completed | 13.1s[#############################           ] | 72% Completed | 13.2s[#############################           ] | 72% Completed | 13.3s[#############################           ] | 74% Completed | 13.4s[#############################           ] | 74% Completed | 13.5s[#############################           ] | 74% Completed | 13.6s[#############################           ] | 74% Completed | 13.7s[##############################          ] | 75% Completed | 13.8s[##############################          ] | 76% Completed | 13.9s[##############################          ] | 76% Completed | 14.0s[##############################          ] | 76% Completed | 14.1s[##############################          ] | 76% Completed | 14.2s[##############################          ] | 76% Completed | 14.3s[##############################          ] | 76% Completed | 14.4s[##############################          ] | 76% Completed | 14.5s[##############################          ] | 76% Completed | 14.7s[##############################          ] | 76% Completed | 14.8s[##############################          ] | 76% Completed | 14.9s[###############################         ] | 77% Completed | 15.1s[###############################         ] | 77% Completed | 15.2s[###############################         ] | 79% Completed | 15.3s[################################        ] | 80% Completed | 15.4s[###################################     ] | 89% Completed | 15.5s[####################################### ] | 98% Completed | 15.6s[########################################] | 100% Completed | 15.7s
+2024-05-03 14:12:41.171530: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcuda.so.1
+2024-05-03 14:12:41.396117: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:c7:00.0 name: NVIDIA A100-SXM4-80GB computeCapability: 8.0
+coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 79.18GiB deviceMemoryBandwidth: 1.85TiB/s
+2024-05-03 14:12:41.396174: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2024-05-03 14:12:41.504117: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2024-05-03 14:12:41.504175: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+2024-05-03 14:12:41.556574: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcufft.so.10
+2024-05-03 14:12:41.607506: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcurand.so.10
+2024-05-03 14:12:41.669883: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusolver.so.11
+2024-05-03 14:12:41.705651: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusparse.so.11
+2024-05-03 14:12:41.749381: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2024-05-03 14:12:41.753442: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2024-05-03 14:12:41.753843: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-03 14:12:41.757237: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:c7:00.0 name: NVIDIA A100-SXM4-80GB computeCapability: 8.0
+coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 79.18GiB deviceMemoryBandwidth: 1.85TiB/s
+2024-05-03 14:12:41.761098: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2024-05-03 14:12:41.761146: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2024-05-03 14:12:42.236715: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1258] Device interconnect StreamExecutor with strength 1 edge matrix:
+2024-05-03 14:12:42.236768: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1264]      0 
+2024-05-03 14:12:42.236779: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1277] 0:   N 
+2024-05-03 14:12:42.240750: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1418] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 78973 MB memory) -> physical GPU (device: 0, name: NVIDIA A100-SXM4-80GB, pci bus id: 0000:c7:00.0, compute capability: 8.0)
+WARNING:tensorflow:Collective ops is not configured at program startup. Some performance features may not be enabled.
+2024-05-03 14:12:53.049695: W tensorflow/core/grappler/optimizers/data/auto_shard.cc:695] AUTO sharding policy will apply DATA sharding policy as it failed to apply FILE sharding policy because of the following reason: Did not find a shardable source, walked to a node which is not a dataset: name: "FlatMapDataset/_9"
+op: "FlatMapDataset"
+input: "PrefetchDataset/_8"
+attr {
+  key: "Targuments"
+  value {
+    list {
+    }
+  }
+}
+attr {
+  key: "f"
+  value {
+    func {
+      name: "__inference_Dataset_flat_map_slice_batch_indices_8388"
+    }
+  }
+}
+attr {
+  key: "output_shapes"
+  value {
+    list {
+      shape {
+        dim {
+          size: 16
+        }
+      }
+    }
+  }
+}
+attr {
+  key: "output_types"
+  value {
+    list {
+      type: DT_INT64
+    }
+  }
+}
+. Consider either turning off auto-sharding or switching the auto_shard_policy to DATA to shard this dataset. You can do this by creating a new `tf.data.Options()` object then setting `options.experimental_distribute.auto_shard_policy = AutoShardPolicy.DATA` before applying the options object to the dataset via `dataset.with_options(options)`.
+2024-05-03 14:12:53.066806: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:176] None of the MLIR Optimization Passes are enabled (registered 2)
+2024-05-03 14:12:53.079096: I tensorflow/core/platform/profile_utils/cpu_utils.cc:114] CPU Frequency: 1996320000 Hz
+2024-05-03 14:13:04.153761: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2024-05-03 14:13:04.706931: I tensorflow/stream_executor/cuda/cuda_dnn.cc:359] Loaded cuDNN version 8101
+2024-05-03 14:13:04.707076: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2024-05-03 14:13:05.731982: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+2024-05-03 14:13:05.732069: I tensorflow/stream_executor/cuda/cuda_blas.cc:1838] TensorFloat-32 will be used for the matrix multiplication. This will only be logged once.
+Epoch 1/1000
+3193/3193 - 763s - d_loss: 8.0862 - g_loss: 10.0971 - residual_loss: 2.4717 - adv_loss: 7.3688 - unet_loss: 1.4709 - gan_mae: 2.4717
+Epoch 2/1000
+3193/3193 - 748s - d_loss: -3.3140e+01 - g_loss: 12.2536 - residual_loss: 2.8381 - adv_loss: 9.3196 - unet_loss: 1.3493 - gan_mae: 2.8381
+Epoch 3/1000
+3193/3193 - 748s - d_loss: -1.0352e+01 - g_loss: -4.1130e+00 - residual_loss: 2.1520 - adv_loss: -6.3993e+00 - unet_loss: 1.2612 - gan_mae: 2.1520
+Epoch 4/1000
+3193/3193 - 748s - d_loss: -6.2878e+00 - g_loss: 14.0220 - residual_loss: 2.5505 - adv_loss: 11.3486 - unet_loss: 1.2598 - gan_mae: 2.5505
+Epoch 5/1000
+3193/3193 - 748s - d_loss: -2.2764e+01 - g_loss: -3.6039e+00 - residual_loss: 2.7098 - adv_loss: -6.4164e+00 - unet_loss: 1.2853 - gan_mae: 2.7098
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+/nesi/project/niwa00004/rampaln/lib/python3.8/site-packages/tensorflow/python/keras/utils/generic_utils.py:494: CustomMaskWarning: Custom mask layers require a config and must override get_config. When loading, the custom mask layer must be passed to the custom_objects argument.
+  warnings.warn('Custom mask layers require a config and must override '
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch 6/1000
+3193/3193 - 748s - d_loss: -2.9436e+01 - g_loss: 13.8441 - residual_loss: 1.8506 - adv_loss: 11.8855 - unet_loss: 1.2615 - gan_mae: 1.8506
+Epoch 7/1000
+3193/3193 - 748s - d_loss: -2.1512e+01 - g_loss: 23.6953 - residual_loss: 2.6075 - adv_loss: 20.9856 - unet_loss: 1.3180 - gan_mae: 2.6075
+Epoch 8/1000
+3193/3193 - 748s - d_loss: -1.6579e+01 - g_loss: -3.0695e+01 - residual_loss: 2.3762 - adv_loss: -3.3200e+01 - unet_loss: 1.2981 - gan_mae: 2.3762
+Epoch 9/1000
+3193/3193 - 748s - d_loss: -1.9432e+01 - g_loss: -3.8968e+00 - residual_loss: 1.9778 - adv_loss: -5.9578e+00 - unet_loss: 1.0882 - gan_mae: 1.9778
+Epoch 10/1000
+3193/3193 - 748s - d_loss: -1.1649e+01 - g_loss: -8.5667e+01 - residual_loss: 1.8511 - adv_loss: -8.7669e+01 - unet_loss: 1.1077 - gan_mae: 1.8511
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch 11/1000
+3193/3193 - 747s - d_loss: -1.1718e+01 - g_loss: -1.7843e+01 - residual_loss: 1.7213 - adv_loss: -1.9621e+01 - unet_loss: 1.1117 - gan_mae: 1.7213
+Epoch 12/1000
+3193/3193 - 748s - d_loss: -2.2441e+01 - g_loss: 18.0115 - residual_loss: 2.1000 - adv_loss: 15.8344 - unet_loss: 1.1323 - gan_mae: 2.1000
+Epoch 13/1000
+3193/3193 - 748s - d_loss: -1.4903e+01 - g_loss: -2.6309e+01 - residual_loss: 1.9260 - adv_loss: -2.8293e+01 - unet_loss: 1.1020 - gan_mae: 1.9260
+Epoch 14/1000
+3193/3193 - 748s - d_loss: -2.4608e+01 - g_loss: 24.5194 - residual_loss: 1.9689 - adv_loss: 22.4826 - unet_loss: 1.2049 - gan_mae: 1.9689
+Epoch 15/1000
+3193/3193 - 748s - d_loss: -2.0742e+01 - g_loss: -1.9291e+01 - residual_loss: 1.8203 - adv_loss: -2.1197e+01 - unet_loss: 1.2150 - gan_mae: 1.8203
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch 16/1000
+3193/3193 - 748s - d_loss: -1.7452e+01 - g_loss: 49.7936 - residual_loss: 1.8238 - adv_loss: 47.8792 - unet_loss: 1.1459 - gan_mae: 1.8238
+Epoch 17/1000
+3193/3193 - 748s - d_loss: -2.0026e+01 - g_loss: -5.9285e+00 - residual_loss: 1.8559 - adv_loss: -7.8676e+00 - unet_loss: 1.0044 - gan_mae: 1.8559
+Epoch 18/1000
+3193/3193 - 748s - d_loss: -6.4729e+00 - g_loss: 23.8064 - residual_loss: 1.6644 - adv_loss: 22.0857 - unet_loss: 0.9764 - gan_mae: 1.6644
+Epoch 19/1000
+3193/3193 - 748s - d_loss: -1.9237e+01 - g_loss: 30.6307 - residual_loss: 1.9699 - adv_loss: 28.5602 - unet_loss: 1.0903 - gan_mae: 1.9699
+Epoch 20/1000
+3193/3193 - 748s - d_loss: -2.2391e+01 - g_loss: 11.0624 - residual_loss: 1.7238 - adv_loss: 9.2559 - unet_loss: 1.1135 - gan_mae: 1.7238
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch 21/1000
+3193/3193 - 748s - d_loss: -1.3303e+01 - g_loss: -3.8208e+01 - residual_loss: 1.9264 - adv_loss: -4.0300e+01 - unet_loss: 1.1058 - gan_mae: 1.9264
+Epoch 22/1000
+3193/3193 - 748s - d_loss: -8.4108e+00 - g_loss: 18.5999 - residual_loss: 1.8886 - adv_loss: 16.5758 - unet_loss: 0.9929 - gan_mae: 1.8886
+Epoch 23/1000
+3193/3193 - 748s - d_loss: -6.6198e+00 - g_loss: 18.8030 - residual_loss: 1.6797 - adv_loss: 17.0441 - unet_loss: 0.9325 - gan_mae: 1.6797
+Epoch 24/1000
+3193/3193 - 748s - d_loss: -7.3000e+00 - g_loss: -4.4084e+01 - residual_loss: 1.7236 - adv_loss: -4.5842e+01 - unet_loss: 1.0098 - gan_mae: 1.7236
+Epoch 25/1000
+3193/3193 - 748s - d_loss: -9.1051e+00 - g_loss: -1.9403e+01 - residual_loss: 1.9059 - adv_loss: -2.1372e+01 - unet_loss: 1.0941 - gan_mae: 1.9059
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+Epoch 26/1000
+3193/3193 - 748s - d_loss: -1.1483e+01 - g_loss: -2.3352e+00 - residual_loss: 1.7507 - adv_loss: -4.1460e+00 - unet_loss: 0.9935 - gan_mae: 1.7507

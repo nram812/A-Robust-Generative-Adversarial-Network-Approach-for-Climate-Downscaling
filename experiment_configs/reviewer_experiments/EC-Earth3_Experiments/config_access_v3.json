@@ -1,0 +1,21 @@
+{ "mean": "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/all_gcm_spatial_means.nc",
+  "std": "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/normalization/all_gcm_spatial_stds.nc",
+  "train_x": "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/predictor_fields/predictor_fields_hist_ssp370_merged_updated.nc",
+  "train_y": "/nesi/project/niwa00018/ML_downscaling_CCAM/multi-variate-gan/inputs/target_fields/target_fields_hist_ssp370_concat.nc",
+  "src_path": "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling",
+  "var_names": ["q_500", "q_850", "u_500", "u_850", "v_500", "v_850", "t_500", "t_850"],
+  "output_folder": "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/models",
+  "model_name": "Reviewer_Historical_Intensity_Max",
+  "time_period": "historical",
+  "notes": "Just trained on the ACCESS-CM2 gcm only, both historical",
+  "ad_loss_factor": 0.0001, "n_filters": [32, 64, 128, 256], "kernel_size": 5,
+  "n_input_channels": 8, "n_output_channels": 1, "output_shape": [172, 179], "input_shape": [23, 26],
+  "learning_rate": 0.0003, "beta_1": 0.5, "beta_2": 0.9, "precip_conv_factor": 1, "log_beta": 3.5,
+  "gan_model_fine_tuning": "None", "d_model_fine_tuning": "None", "fine_tuning": "False", "latent_loss": 0.05, "gp_weight": 10,
+  "discrim_steps": 3,
+  "static_predictors": "./data/static_predictors/ERA5_eval_ccam_12km.198110_NZ_Invariant.nc",
+  "learning_rate_unet": 0.0003, "decay_steps":1000, "decay_rate_gan":0.995, "decay_rate":0.995,
+  "batch_size":32,"epochs":1000,"discrim_steps":3, "norm":"log", "delta":0.01,
+  "itensity_weight": 1, "unet_pretrained_path": "./models/Intensity_Penalty/base_unet/unet_final.h5","train_gcm": "EC-Earth3"
+}
+

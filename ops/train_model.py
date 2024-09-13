@@ -2,11 +2,9 @@ import xarray as xr
 import sys
 import matplotlib.pyplot as plt
 import os
-import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import cartopy.crs as ccrs
 from tensorflow.keras.callbacks import Callback
-from comet_ml import Experiment
 import numpy as np
 import tensorflow as tf
 from functools import partial
@@ -18,7 +16,7 @@ import json
 from tensorflow.keras.optimizers import Adam
 from tensorflow.distribute import MirroredStrategy
 from tensorflow.keras import layers
-import pandas as pd
+
 
 config_file = sys.argv[-1] # configuratoin file for training algorithm
 pretrained_unet = False # set this as true if you want to use the same U-Net or a specific unet everytime. 
@@ -48,7 +46,10 @@ from src.process_input_training_data import *
 
 
 stacked_X, y, vegt, orog, he = preprocess_input_data(config)
-
+with ProgressBar():
+    y = y.load().transpose("time", "lat", "lon")
+    stacked_X = stacked_X.transpose("time", "lat", "lon", "channel")
+    stacked_X = stacked_X.load()
 
 strategy = MirroredStrategy()
 

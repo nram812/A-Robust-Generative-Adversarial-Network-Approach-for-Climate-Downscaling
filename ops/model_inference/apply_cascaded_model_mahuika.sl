@@ -1,10 +1,10 @@
 #!/bin/bash -l
 #SBATCH --job-name=GPU_job
-#SBATCH --partition=hgx
-#SBATCH --time=32:59:00
-#SBATCH --mem=400G
+#SBATCH --partition=gpu
+#SBATCH --time=05:59:00
+#SBATCH --mem=169G
 #SBATCH --cpus-per-task=32
-#SBATCH --gpus-per-node=A100:1
+#SBATCH --gpus-per-node=P100:1
 #SBATCH --account=niwa03712
 #SBATCH --mail-user=neelesh.rampal@niwa.co.nz
 #SBATCH --mail-type=ALL
@@ -31,10 +31,10 @@ nvidia-smi
 #/nesi/project/niwa00004/rampaln/bin/python #/nesi/project/niwa00018/ML_downscaling_CCAM/Training_CNN/ops/training_GAN/train_gan_imperfect_framework_#updated_fine_tuning.py
 
 # Pacific Domain
-cd /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/
+cd /nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling
 
 #/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/paper_experiments/model_inference_cascade.py
-/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/paper_experiments/create_figures.py
+#/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/training_GAN/paper_experiments/create_figures.py
 
-
+/nesi/project/niwa00004/rampaln/bin/python /nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/ops/model_inference/model_inference_all_gcms.py $1
 

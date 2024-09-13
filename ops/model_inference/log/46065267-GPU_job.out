@@ -1,0 +1,78 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: Cannot load module "NIWA" because these
+module(s) are loaded:
+   NeSI
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NIWA             /opt/nesi/modulefiles/NIWA.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Fri May  3 00:11:37 2024       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA A100-SXM...  On   | 00000000:C7:00.0 Off |                    0 |
+| N/A   43C    P0    66W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+2024-05-03 00:11:48.113747: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+Traceback (most recent call last):
+  File "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling/ops/model_inference/model_inference_all_gcms.py", line 23, in <module>
+    config['output_dir']
+NameError: name 'config' is not defined

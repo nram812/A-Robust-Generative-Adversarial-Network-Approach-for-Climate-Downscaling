@@ -1,0 +1,78 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: Cannot load module "NIWA" because these
+module(s) are loaded:
+   NeSI
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NIWA             /opt/nesi/modulefiles/NIWA.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Thu May  2 22:29:42 2024       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA A100-SXM...  On   | 00000000:85:00.0 Off |                    0 |
+| N/A   27C    P0    59W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+2024-05-02 22:29:46.612494: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+Traceback (most recent call last):
+  File "ops/train_model_gust.py", line 34, in <module>
+    unet_pretrained_path = config['unet_pretrained_path']
+KeyError: 'unet_pretrained_path'

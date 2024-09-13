@@ -25,7 +25,7 @@ nvidia-smi
 # change to your working directory
 cd "/nesi/project/niwa00018/ML_downscaling_CCAM/A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling"
 
-/nesi/project/niwa00004/rampaln/bin/python ops/train_model.py $1
+/nesi/project/niwa00004/rampaln/bin/python ops/train_model_rain_future.py $1
 
 
 

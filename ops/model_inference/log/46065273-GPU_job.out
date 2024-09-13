@@ -1,0 +1,110 @@
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: Cannot load module "NIWA" because these
+module(s) are loaded:
+   NeSI
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NIWA             /opt/nesi/modulefiles/NIWA.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Lmod has detected the following error: The following module(s) are unknown:
+"OCI/12.2"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "OCI/12.2"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) XALT/minimal   2) slurm   3) NeSI
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Fri May  3 00:12:29 2024       
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 525.85.12    Driver Version: 525.85.12    CUDA Version: 12.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  NVIDIA A100-SXM...  On   | 00000000:C7:00.0 Off |                    0 |
+| N/A   43C    P0    66W / 400W |      0MiB / 81920MiB |      0%      Default |
+|                               |                      |             Disabled |
++-------------------------------+----------------------+----------------------+
+                                                                               
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
+|  No running processes found                                                 |
++-----------------------------------------------------------------------------+
+2024-05-03 00:12:31.585346: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2024-05-03 00:12:38.664756: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcuda.so.1
+2024-05-03 00:12:38.860818: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:c7:00.0 name: NVIDIA A100-SXM4-80GB computeCapability: 8.0
+coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 79.18GiB deviceMemoryBandwidth: 1.85TiB/s
+2024-05-03 00:12:38.860881: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2024-05-03 00:12:38.944619: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2024-05-03 00:12:38.945315: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+2024-05-03 00:12:38.977928: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcufft.so.10
+2024-05-03 00:12:39.016764: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcurand.so.10
+2024-05-03 00:12:39.044563: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusolver.so.11
+2024-05-03 00:12:39.097342: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcusparse.so.11
+2024-05-03 00:12:39.114587: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2024-05-03 00:12:39.118841: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2024-05-03 00:12:39.119121: I tensorflow/core/platform/cpu_feature_guard.cc:142] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX2 FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-05-03 00:12:39.122303: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1733] Found device 0 with properties: 
+pciBusID: 0000:c7:00.0 name: NVIDIA A100-SXM4-80GB computeCapability: 8.0
+coreClock: 1.41GHz coreCount: 108 deviceMemorySize: 79.18GiB deviceMemoryBandwidth: 1.85TiB/s
+2024-05-03 00:12:39.126170: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1871] Adding visible gpu devices: 0
+2024-05-03 00:12:39.126215: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudart.so.11.0
+2024-05-03 00:12:39.604864: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1258] Device interconnect StreamExecutor with strength 1 edge matrix:
+2024-05-03 00:12:39.604913: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1264]      0 
+2024-05-03 00:12:39.604924: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1277] 0:   N 
+2024-05-03 00:12:39.609052: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1418] Created TensorFlow device (/job:localhost/replica:0/task:0/device:GPU:0 with 78973 MB memory) -> physical GPU (device: 0, name: NVIDIA A100-SXM4-80GB, pci bus id: 0000:c7:00.0, compute capability: 8.0)
+<xarray.DataArray 'orog' ()>
+array(1733.36035156) <xarray.DataArray 'he' ()>
+array(1157.46264648) <xarray.DataArray 'vegt' ()>
+array(17.00000763)
+prepraring data fpr a GCM ACCESS-CM2
+Predicting:   0%|          | 0/3195 [00:00<?, ?batch/s]2024-05-03 00:12:41.473658: I tensorflow/compiler/mlir/mlir_graph_optimization_pass.cc:176] None of the MLIR Optimization Passes are enabled (registered 2)
+2024-05-03 00:12:41.488051: I tensorflow/core/platform/profile_utils/cpu_utils.cc:114] CPU Frequency: 1996320000 Hz
+2024-05-03 00:12:41.623325: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcudnn.so.8
+2024-05-03 00:12:42.159720: I tensorflow/stream_executor/cuda/cuda_dnn.cc:359] Loaded cuDNN version 8101
+2024-05-03 00:12:42.984903: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublas.so.11
+2024-05-03 00:12:43.423312: I tensorflow/stream_executor/platform/default/dso_loader.cc:53] Successfully opened dynamic library libcublasLt.so.11
+Predicting:   0%|          | 1/3195 [00:03<2:50:24,  3.20s/batch]Predicting:   0%|          | 4/3195 [00:03<34:21,  1.55batch/s]  Predicting:   0%|          | 7/3195 [00:03<17:20,  3.06batch/s]Predicting:   0%|          | 10/3195 [00:03<11:55,  4.45batch/s]Predicting:   0%|          | 13/3195 [00:03<08:22,  6.33batch/s]Predicting:   1%|          | 16/3195 [00:04<06:21,  8.33batch/s]Predicting:   1%|          | 19/3195 [00:04<05:06, 10.35batch/s]Predicting:   1%|          | 22/3195 [00:04<04:18, 12.27batch/s]Predicting:   1%|          | 25/3195 [00:04<03:43, 14.18batch/s]Predicting:   1%|          | 27/3195 [00:04<03:29, 15.12batch/s]Predicting:   1%|          | 29/3195 [00:04<03:17, 16.00batch/s]Predicting:   1%|          | 32/3195 [00:04<03:03, 17.20batch/s]Predicting:   1%|          | 35/3195 [00:05<02:54, 18.06batch/s]Predicting:   1%|          | 38/3195 [00:05<02:49, 18.64batch/s]Predicting:   1%|▏         | 41/3195 [00:05<02:45, 19.06batch/s]Predicting:   1%|▏         | 44/3195 [00:05<04:02, 13.00batch/s]Predicting:   1%|▏         | 47/3195 [00:05<03:36, 14.56batch/s]Predicting:   2%|▏         | 50/3195 [00:06<03:17, 15.92batch/s]Predicting:   2%|▏         | 53/3195 [00:06<03:05, 16.98batch/s]Predicting:   2%|▏         | 56/3195 [00:06<02:56, 17.78batch/s]Predicting:   2%|▏         | 58/3195 [00:06<03:17, 15.91batch/s]Predicting:   2%|▏         | 60/3195 [00:06<03:08, 16.62batch/s]Predicting:   2%|▏         | 62/3195 [00:06<03:02, 17.20batch/s]Predicting:   2%|▏         | 65/3195 [00:06<02:53, 18.09batch/s]Predicting:   2%|▏         | 68/3195 [00:06<02:47, 18.70batch/s]Predicting:   2%|▏         | 71/3195 [00:07<02:43, 19.13batch/s]Predicting:   2%|▏         | 74/3195 [00:07<02:40, 19.41batch/s]Predicting:   2%|▏         | 77/3195 [00:07<02:38, 19.62batch/s]Predicting:   3%|▎         | 80/3195 [00:07<02:37, 19.74batch/s]Predicting:   3%|▎         | 83/3195 [00:07<02:37, 19.82batch/s]Predicting:   3%|▎         | 85/3195 [00:08<04:52, 10.62batch/s]Predicting:   3%|▎         | 87/3195 [00:08<04:20, 11.94batch/s]Predicting:   3%|▎         | 90/3195 [00:08<03:44, 13.84batch/s]Predicting:   3%|▎         | 93/3195 [00:08<03:21, 15.41batch/s]Predicting:   3%|▎         | 96/3195 [00:08<03:06, 16.64batch/s]Predicting:   3%|▎         | 99/3195 [00:08<02:55, 17.61batch/s]Predicting:   3%|▎         | 102/3195 [00:09<02:48, 18.31batch/s]Predicting:   3%|▎         | 105/3195 [00:09<02:44, 18.77batch/s]Predicting:   3%|▎         | 108/3195 [00:09<02:41, 19.11batch/s]Predicting:   3%|▎         | 111/3195 [00:09<02:39, 19.36batch/s]Predicting:   4%|▎         | 114/3195 [00:09<02:37, 19.57batch/s]Predicting:   4%|▎         | 117/3195 [00:09<02:36, 19.72batch/s]Predicting:   4%|▍         | 120/3195 [00:09<02:35, 19.83batch/s]Predicting:   4%|▍         | 123/3195 [00:10<02:34, 19.83batch/s]Predicting:   4%|▍         | 126/3195 [00:10<02:34, 19.90batch/s]Predicting:   4%|▍         | 129/3195 [00:10<02:33, 19.95batch/s]Predicting:   4%|▍         | 132/3195 [00:11<05:34,  9.16batch/s]Predicting:   4%|▍         | 135/3195 [00:11<04:39, 10.94batch/s]Predicting:   4%|▍         | 137/3195 [00:11<06:17,  8.11batch/s]Predicting:   4%|▍         | 139/3195 [00:11<05:24,  9.43batch/s]Predicting:   4%|▍         | 141/3195 [00:12<04:41, 10.86batch/s]Predicting:   5%|▍         | 144/3195 [00:12<03:55, 12.93batch/s]Predicting:   5%|▍         | 147/3195 [00:12<03:27, 14.66batch/s]Predicting:   5%|▍         | 150/3195 [00:12<03:06, 16.32batch/s]Predicting:   5%|▍         | 152/3195 [00:12<02:59, 16.93batch/s]Predicting:   5%|▍         | 154/3195 [00:12<02:54, 17.47batch/s]Predicting:   5%|▍         | 157/3195 [00:12<02:46, 18.23batch/s]Predicting:   5%|▌         | 160/3195 [00:12<02:41, 18.75batch/s]Predicting:   5%|▌         | 163/3195 [00:13<02:38, 19.08batch/s]Predicting:   5%|▌         | 166/3195 [00:13<02:36, 19.31batch/s]Predicting:   5%|▌         | 169/3195 [00:13<02:35, 19.46batch/s]Predicting:   5%|▌         | 172/3195 [00:13<02:34, 19.60batch/s]Predicting:   5%|▌         | 175/3195 [00:13<02:33, 19.71batch/s]Predicting:   6%|▌         | 178/3195 [00:13<02:32, 19.74batch/s]Predicting:   6%|▌         | 181/3195 [00:14<02:32, 19.81batch/s]Predicting:   6%|▌         | 184/3195 [00:14<02:31, 19.85batch/s]Predicting:   6%|▌         | 187/3195 [00:14<02:31, 19.91batch/s]Predicting:   6%|▌         | 190/3195 [00:14<02:30, 19.95batch/s]Predicting:   6%|▌         | 193/3195 [00:15<06:29,  7.71batch/s]Predicting:   6%|▌         | 196/3195 [00:15<05:16,  9.47batch/s]Predicting:   6%|▌         | 199/3195 [00:15<04:25, 11.27batch/s]Predicting:   6%|▋         | 202/3195 [00:15<03:50, 12.98batch/s]Predicting:   6%|▋         | 205/3195 [00:16<03:29, 14.27batch/s]Predicting:   7%|▋         | 208/3195 [00:16<03:11, 15.61batch/s]Predicting:   7%|▋         | 210/3195 [00:16<03:15, 15.24batch/s]Predicting:   7%|▋         | 212/3195 [00:16<03:05, 16.06batch/s]Predicting:   7%|▋         | 214/3195 [00:16<04:07, 12.04batch/s]Predicting:   7%|▋         | 217/3195 [00:16<03:32, 14.02batch/s]Predicting:   7%|▋         | 220/3195 [00:16<03:07, 15.87batch/s]Predicting:   7%|▋         | 222/3195 [00:17<02:59, 16.60batch/s]Predicting:   7%|▋         | 224/3195 [00:17<02:52, 17.25batch/s]Predicting:   7%|▋         | 227/3195 [00:17<02:43, 18.20batch/s]Predicting:   7%|▋         | 230/3195 [00:17<02:38, 18.76batch/s]Predicting:   7%|▋         | 233/3195 [00:17<02:34, 19.14batch/s]Predicting:   7%|▋         | 236/3195 [00:17<02:32, 19.40batch/s]Predicting:   7%|▋         | 239/3195 [00:17<02:30, 19.62batch/s]Predicting:   8%|▊         | 242/3195 [00:18<02:29, 19.75batch/s]Predicting:   8%|▊         | 245/3195 [00:18<02:28, 19.88batch/s]Predicting:   8%|▊         | 248/3195 [00:18<02:27, 19.95batch/s]Predicting:   8%|▊         | 251/3195 [00:18<02:27, 20.00batch/s]Predicting:   8%|▊         | 254/3195 [00:18<02:27, 20.00batch/s]Predicting:   8%|▊         | 257/3195 [00:18<02:26, 20.01batch/s]Predicting:   8%|▊         | 260/3195 [00:18<02:26, 19.99batch/s]Predicting:   8%|▊         | 263/3195 [00:19<02:26, 20.02batch/s]Predicting:   8%|▊         | 266/3195 [00:19<02:26, 20.04batch/s]Predicting:   8%|▊         | 269/3195 [00:20<07:38,  6.39batch/s]Predicting:   9%|▊         | 272/3195 [00:20<06:03,  8.04batch/s]Predicting:   9%|▊         | 275/3195 [00:20<04:57,  9.80batch/s]Predicting:   9%|▊         | 278/3195 [00:20<04:11, 11.58batch/s]Predicting:   9%|▉         | 281/3195 [00:21<03:39, 13.25batch/s]Predicting:   9%|▉         | 284/3195 [00:21<03:17, 14.75batch/s]Predicting:   9%|▉         | 287/3195 [00:21<03:01, 16.02batch/s]Predicting:   9%|▉         | 290/3195 [00:21<02:50, 17.06batch/s]Predicting:   9%|▉         | 293/3195 [00:21<02:42, 17.86batch/s]Predicting:   9%|▉         | 296/3195 [00:21<02:34, 18.81batch/s]Predicting:   9%|▉         | 299/3195 [00:21<02:31, 19.16batch/s]Predicting:   9%|▉         | 302/3195 [00:22<02:29, 19.41batch/s]Predicting:  10%|▉         | 305/3195 [00:22<02:27, 19.57batch/s]Predicting:  10%|▉         | 308/3195 [00:22<02:26, 19.70batch/s]Predicting:  10%|▉         | 311/3195 [00:22<02:25, 19.79batch/s]Predicting:  10%|▉         | 314/3195 [00:22<02:25, 19.87batch/s]Predicting:  10%|▉         | 317/3195 [00:22<02:24, 19.92batch/s]Predicting:  10%|█         | 320/3195 [00:23<02:24, 19.94batch/s]Predicting:  10%|█         | 323/3195 [00:23<02:23, 19.97batch/s]Predicting:  10%|█         | 326/3195 [00:23<02:23, 19.96batch/s]Predicting:  10%|█         | 329/3195 [00:23<02:23, 19.94batch/s]Predicting:  10%|█         | 331/3195 [00:23<02:24, 19.77batch/s]Predicting:  10%|█         | 333/3195 [00:23<02:25, 19.66batch/s]Predicting:  11%|█         | 336/3195 [00:23<02:24, 19.74batch/s]Predicting:  11%|█         | 339/3195 [00:23<02:24, 19.82batch/s]Predicting:  11%|█         | 341/3195 [00:24<04:42, 10.11batch/s]Predicting:  11%|█         | 343/3195 [00:24<06:15,  7.60batch/s]Predicting:  11%|█         | 345/3195 [00:25<05:50,  8.12batch/s]Predicting:  11%|█         | 347/3195 [00:25<05:09,  9.20batch/s]Predicting:  11%|█         | 349/3195 [00:25<04:46,  9.93batch/s]Predicting:  11%|█         | 351/3195 [00:25<05:11,  9.13batch/s]Predicting:  11%|█         | 353/3195 [00:26<07:17,  6.50batch/s]Predicting:  11%|█         | 354/3195 [00:26<07:24,  6.39batch/s]Predicting:  11%|█         | 355/3195 [00:26<07:33,  6.27batch/s]Predicting:  11%|█         | 356/3195 [00:26<07:24,  6.39batch/s]Predicting:  11%|█         | 357/3195 [00:26<07:13,  6.54batch/s]Predicting:  11%|█         | 358/3195 [00:27<07:13,  6.55batch/s]Predicting:  11%|█         | 359/3195 [00:27<06:41,  7.07batch/s]Predicting:  11%|█▏        | 360/3195 [00:27<07:00,  6.73batch/s]Predicting:  11%|█▏        | 361/3195 [00:27<07:10,  6.59batch/s]Predicting:  11%|█▏        | 362/3195 [00:27<07:50,  6.03batch/s]Predicting:  11%|█▏        | 363/3195 [00:29<26:27,  1.78batch/s]Predicting:  11%|█▏        | 365/3195 [00:29<15:32,  3.04batch/s]Predicting:  11%|█▏        | 367/3195 [00:29<10:27,  4.51batch/s]Predicting:  12%|█▏        | 369/3195 [00:29<07:35,  6.20batch/s]Predicting:  12%|█▏        | 372/3195 [00:29<05:14,  8.99batch/s]Predicting:  12%|█▏        | 374/3195 [00:29<04:24, 10.67batch/s]Predicting:  12%|█▏        | 376/3195 [00:29<03:49, 12.31batch/s]Predicting:  12%|█▏        | 379/3195 [00:30<03:14, 14.45batch/s]Predicting:  12%|█▏        | 382/3195 [00:30<02:55, 16.01batch/s]Predicting:  12%|█▏        | 385/3195 [00:30<02:43, 17.17batch/s]Predicting:  12%|█▏        | 388/3195 [00:30<02:35, 18.01batch/s]Predicting:  12%|█▏        | 391/3195 [00:30<02:30, 18.61batch/s]Predicting:  12%|█▏        | 394/3195 [00:30<02:26, 19.07batch/s]Predicting:  12%|█▏        | 397/3195 [00:30<02:24, 19.37batch/s]Predicting:  13%|█▎        | 400/3195 [00:31<02:23, 19.52batch/s]Predicting:  13%|█▎        | 403/3195 [00:31<02:22, 19.65batch/s]Predicting:  13%|█▎        | 406/3195 [00:31<02:21, 19.74batch/s]Predicting:  13%|█▎        | 408/3195 [00:31<02:40, 17.35batch/s]Predicting:  13%|█▎        | 410/3195 [00:31<02:36, 17.77batch/s]Predicting:  13%|█▎        | 412/3195 [00:31<02:33, 18.16batch/s]Predicting:  13%|█▎        | 415/3195 [00:31<02:28, 18.77batch/s]Predicting:  13%|█▎        | 418/3195 [00:32<02:24, 19.18batch/s]Predicting:  13%|█▎        | 421/3195 [00:32<02:22, 19.43batch/s]Predicting:  13%|█▎        | 424/3195 [00:32<02:21, 19.59batch/s]Predicting:  13%|█▎        | 427/3195 [00:32<02:20, 19.68batch/s]Predicting:  13%|█▎        | 430/3195 [00:32<02:20, 19.75batch/s]Predicting:  14%|█▎        | 433/3195 [00:32<02:19, 19.80batch/s]Predicting:  14%|█▎        | 436/3195 [00:32<02:19, 19.84batch/s]Predicting:  14%|█▎        | 439/3195 [00:33<02:18, 19.86batch/s]Predicting:  14%|█▍        | 442/3195 [00:33<02:18, 19.90batch/s]Predicting:  14%|█▍        | 445/3195 [00:33<02:18, 19.91batch/s]Predicting:  14%|█▍        | 448/3195 [00:33<02:18, 19.90batch/s]Predicting:  14%|█▍        | 451/3195 [00:33<02:17, 19.90batch/s]Predicting:  14%|█▍        | 454/3195 [00:33<02:17, 19.90batch/s]Predicting:  14%|█▍        | 457/3195 [00:33<02:17, 19.89batch/s]Predicting:  14%|█▍        | 460/3195 [00:34<02:17, 19.91batch/s]Predicting:  14%|█▍        | 463/3195 [00:34<02:17, 19.91batch/s]Predicting:  15%|█▍        | 466/3195 [00:34<02:14, 20.34batch/s]Predicting:  15%|█▍        | 469/3195 [00:34<02:14, 20.25batch/s]Predicting:  15%|█▍        | 472/3195 [00:34<02:15, 20.16batch/s]Predicting:  15%|█▍        | 475/3195 [00:34<02:15, 20.07batch/s]Predicting:  15%|█▍        | 478/3195 [00:35<02:15, 20.05batch/s]Predicting:  15%|█▌        | 481/3195 [00:35<02:15, 20.03batch/s]Predicting:  15%|█▌        | 484/3195 [00:37<10:55,  4.14batch/s]Predicting:  15%|█▌        | 486/3195 [00:37<09:02,  5.00batch/s]Predicting:  15%|█▌        | 488/3195 [00:37<07:24,  6.09batch/s]Predicting:  15%|█▌        | 491/3195 [00:37<05:38,  7.98batch/s]Predicting:  15%|█▌        | 494/3195 [00:37<04:31,  9.95batch/s]Predicting:  16%|█▌        | 497/3195 [00:37<03:48, 11.83batch/s]Predicting:  16%|█▌        | 500/3195 [00:38<03:18, 13.55batch/s]Predicting:  16%|█▌        | 503/3195 [00:38<02:59, 15.03batch/s]Predicting:  16%|█▌        | 506/3195 [00:38<02:45, 16.25batch/s]Predicting:  16%|█▌        | 509/3195 [00:38<02:36, 17.20batch/s]Predicting:  16%|█▌        | 512/3195 [00:38<02:29, 17.95batch/s]Predicting:  16%|█▌        | 515/3195 [00:38<02:24, 18.54batch/s]Predicting:  16%|█▌        | 518/3195 [00:38<02:21, 18.97batch/s]Predicting:  16%|█▋        | 521/3195 [00:39<02:18, 19.24batch/s]Predicting:  16%|█▋        | 524/3195 [00:39<02:17, 19.41batch/s]Predicting:  16%|█▋        | 527/3195 [00:39<02:16, 19.56batch/s]Predicting:  17%|█▋        | 530/3195 [00:39<02:15, 19.65batch/s]Predicting:  17%|█▋        | 533/3195 [00:39<02:15, 19.72batch/s]Predicting:  17%|█▋        | 536/3195 [00:39<02:14, 19.79batch/s]slurmstepd: error: *** JOB 46065273 ON wmg002 CANCELLED AT 2024-05-02T12:13:21 ***

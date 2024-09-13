@@ -31,26 +31,26 @@ for file in "$directory"/*.json; do
 done
 
 
-directory="experiment_configs/GAN"
-
-if [ ! -d "$directory" ]; then
-    echo "Directory does not exist: $directory"
-    exit 1
-fi
-
-
-for file in "$directory"/*.json; do
-    if [ -f "$file" ]; then
-        # Process each .json file as needed
-        echo "Processing file: $file"
-        sbatch ops/run_config_experiments.sl $file
-
-        # Add your custom logic here to work with each file
-        # For example, you could read the content of the file:
-        # content=$(cat "$file")
-        # echo "File content: $content"
-    fi
-done
+#directory="experiment_configs/GAN"
+#
+#if [ ! -d "$directory" ]; then
+#    echo "Directory does not exist: $directory"
+#    exit 1
+#fi
+#
+#
+#for file in "$directory"/*.json; do
+#    if [ -f "$file" ]; then
+#        # Process each .json file as needed
+#        echo "Processing file: $file"
+#        sbatch ops/run_config_experiments.sl $file
+#
+#        # Add your custom logic here to work with each file
+#        # For example, you could read the content of the file:
+#        # content=$(cat "$file")
+#        # echo "File content: $content"
+#    fi
+#done
 
 
 

@@ -1,0 +1,71 @@
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "OCI/12.2"
+   Try: "module spider OCI/12.2" to see how to load the module(s).
+
+
+
+Lmod has detected the following error: These module(s) or extension(s) exist
+but cannot be loaded as requested: "OCI/12.2"
+   Try: "module spider OCI/12.2" to see how to load the module(s).
+
+
+
+The following modules were not unloaded:
+  (Use "module --force purge" to unload all):
+
+  1) slurm   2) NIWA
+Lmod has detected the following error: Cannot load module "NeSI" because these
+module(s) are loaded:
+   NIWA
+
+While processing the following module(s):
+    Module fullname  Module Filename
+    ---------------  ---------------
+    NeSI             /opt/nesi/modulefiles/NeSI.lua
+
+Lmod has detected the following error: The following module(s) are unknown:
+"gcc/9.3.0"
+
+Please check the spelling or version number. Also try "module spider ..."
+It is also possible your cache file is out-of-date; it may help to try:
+  $ module --ignore_cache load "gcc/9.3.0"
+
+Also make sure that all modulefiles written in TCL start with the string
+#%Module
+
+
+
+Fri May  3 19:16:55 2024       
++---------------------------------------------------------------------------------------+
+| NVIDIA-SMI 535.104.05             Driver Version: 535.104.05   CUDA Version: 12.2     |
+|-----------------------------------------+----------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |         Memory-Usage | GPU-Util  Compute M. |
+|                                         |                      |               MIG M. |
+|=========================================+======================+======================|
+|   0  NVIDIA A100-SXM4-80GB          Off | 00000000:01:00.0 Off |                    0 |
+| N/A   29C    P0              66W / 500W |   1184MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   1  NVIDIA A100-SXM4-80GB          Off | 00000000:41:00.0 Off |                    0 |
+| N/A   28C    P0              62W / 500W |      4MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   2  NVIDIA A100-SXM4-80GB          Off | 00000000:81:00.0 Off |                    0 |
+| N/A   27C    P0              67W / 500W |   1188MiB / 81920MiB |      6%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+|   3  NVIDIA A100-SXM4-80GB          Off | 00000000:C1:00.0 Off |                    0 |
+| N/A   27C    P0              56W / 500W |      4MiB / 81920MiB |      0%      Default |
+|                                         |                      |             Disabled |
++-----------------------------------------+----------------------+----------------------+
+                                                                                         
++---------------------------------------------------------------------------------------+
+| Processes:                                                                            |
+|  GPU   GI   CI        PID   Type   Process name                            GPU Memory |
+|        ID   ID                                                             Usage      |
+|=======================================================================================|
+|    0   N/A  N/A   3106043      C   python                                     1170MiB |
+|    2   N/A  N/A   3105315      C   python                                     1174MiB |
++---------------------------------------------------------------------------------------+
+slurmstepd: error: *** JOB 40600839 ON wmg101 CANCELLED AT 2024-05-03T07:17:01 ***

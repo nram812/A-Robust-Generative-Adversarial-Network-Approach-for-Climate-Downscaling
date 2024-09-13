@@ -1,0 +1,38 @@
+##
+
+The configurations with the U-Net trained at the same time appear to preserve the climate change
+signal better than those that are trained indepedently....
+
+"""I think the the fourier layers could be a solution here
+
+
+I need to figure out how to make them work though
+"""
+
+Something to note, about some "GAN regularization" and preserving the noise signal. The pretrained models appear to do overfit
+
+I've now changed the decay rates to see if this improves the GanS.
+
+Have now modified the discrimator to handle the maximum intensity and added a new constraint to make the model
+more aware of the climate change signal .
+
+Capturing the extreme eevents is important (i.e. the model is able to learn non-linear aspects of the dynamics....
+
+Tried a few new things
+1. I tried to introduce a spatial constraint (maximum) but that didn;t work well.
+2. I tried to change the weight of the intensity constraint - which I haven't fully investigated yet
+3. I tried to use a "fixed" pre-trained U-Net but that causes the model to even further overfit
+4. I am now trying to now reduce the weight of the intensity constraint, but I have now changed the model
+architecture to not have any concatenation of the unet at the last part (as I thought that was constraining the GAN too much).
+
+I tried a signal preserving method during training, but it seems the biggest effect arises from the fact that I used batch normalization within
+the layers of the network, bu
+
+The GAN outputs for the extreme run are located on the paper/experiments folder.
+
+Batchnormalization appears to play a really big role in the quality of the outputs, trained without batchnormalization appears to have lots of artifacts in the quality of the outputs
+This is the case for both temperature and precipitatoin.
+
+on 21-05 I moved the batch noramlization layers from the conv layer
+
+I only just now aded a signal constraint
