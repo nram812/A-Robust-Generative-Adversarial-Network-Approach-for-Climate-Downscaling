@@ -1,5 +1,5 @@
 # A-Robust-Generative-Adversarial-Network-Approach-for-Climate-Downscaling
-This repository contains the code and data (link to Zenodo) for "A Robust Generative Adversarial Network Approach for Climate Downscaling"
+This repository contains the code (data is at https://doi.org/10.5281/zenodo.10889046) for "A Robust Generative Adversarial Network Approach for Climate Downscaling"
 
 This repository is under active development, the evaluation scripts are currently being developed and will be uploaded as soon as available. 
 
